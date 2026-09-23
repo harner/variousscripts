@@ -1,0 +1,77 @@
+
+
+
+REG QUERY "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
+
+REG QUERY "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
+
+Modifying Windows Registry Keys remotely via SSH:
+
+For TightVNC/Lookpack enabling remotely-
+- Query first to verify registry key location, look for keys RfbPort, UseCOntrolAuthentication, UseVncAuthentication, ControlPassword, and Password (defined during install)
+
+64-bit:
+REG QUERY "HKLM\SOFTWARE\Wow6432Node\TightVNC\Server"
+or
+32-bit: (default)
+REG QUERY "HKLM\SOFTWARE\TightVNC\Server"
+
+or do a search!
+REG QUERY HKLM\SOFTWARE /s /f AllowLoopback
+
+- look for AllowLoopback and LoopbackOnly, AllowLoopback should be set to 0x1 (0x1 = enabled), LoopbackOnly should be set to 0x0 (prevents local testing when enabled)
+
+**If a key does not exist, add it to the TightVNC\Server key:
+
+REG ADD "HKLM\SOFTWARE\TightVNC\Server" /v AllowLoopback /t REG_DWORD /d 1 /f
+REG ADD "HKLM\SOFTWARE\TightVNC\Server" /v LoopbackOnly /t REG_DWORD /d 0 /f
+net stop "TightVNC Server" && net start "TightVNC Server"
+
+or:
+
+REG ADD "HKLM\SOFTWARE\Wow6432Node\TightVNC\Server" /v AllowLoopback /t REG_DWORD /d 1 /f
+REG ADD "HKLM\SOFTWARE\Wow6432Node\TightVNC\Server" /v LoopbackOnly /t REG_DWORD /d 0 /f
+net stop "TightVNC Server" && net start "TightVNC Server"
+
+64-bit/Alternative:
+
+REG ADD "HKLM\SOFTWARE\Wow6432Node\TightVNC\Server" /v AllowLoopback /t REG_DWORD /d 0 /f
+REG ADD "HKLM\SOFTWARE\Wow6432Node\TightVNC\Server" /v LoopbackOnly /t REG_DWORD /d 0 /f
+net stop "TightVNC Server" && net start "TightVNC Server"
+
+
+REG ADD "HKLM\SOFTWARE\Wow6432Node\TightVNC\Server" /v ControlPassword /t REG_BINARY /d dcacc3da85665aca /f
+REG ADD "HKLM\SOFTWARE\Wow6432Node\TightVNC\Server" /v Password /t REG_BINARY /d dcacc3da85665aca /f
+net stop "TightVNC Server" && net start "TightVNC Server"
+
+
+Changing the default port/Win10/FUJI Test:
+REG ADD "HKLM\SOFTWARE\TightVNC\Server" /v RfbPort /t REG_DWORD /d 0x170f /f
+REG ADD "HKLM\SOFTWARE\TightVNC\Server" /v AllowLoopback /t REG_DWORD /d 1 /f
+REG ADD "HKLM\SOFTWARE\TightVNC\Server" /v LoopbackOnly /t REG_DWORD /d 0 /f
+net stop "TightVNC Server" && net start "TightVNC Server"
+
+
+REG QUERY "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
+
+REG QUERY "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
+
+Installing VNC Remotely
+msiexec /i %~dp0Installers\vnc\tightvnc-2.8.75-gpl-setup-32bit.msi /quiet /norestart ADDLOCAL=Server SERVER_REGISTER_AS_SERVICE=1 SERVER_ADD_FIREWALL_EXCEPTION=1 SET_USEVNCAUTHENTICATION=1 VALUE_OF_USEVNCAUTHENTICATION=1 SET_PASSWORD=1 VALUE_OF_PASSWORD=45608 SET_USECONTROLAUTHENTICATION=1 VALUE_OF_USECONTROLAUTHENTICATION=1 SET_CONTROLPASSWORD=1 VALUE_OF_CONTROLPASSWORD=45608 SET_RFBPORT=1 VALUE_OF_RFBPORT=5903 SET_ALLOWLOOPBACK=1 VALUE_OF_ALLOWLOOPBACK=1 SET_LOOPBACKONLY=0 VALUE_OF_LOOPBACKONLY=0
+
+Uninstalling VNC Remotely
+*Copy the msi locally to the scanner, ie c:\Temp
+msiexec /x tightvnc-2.8.75-gpl-setup-32bit.msi /qn /norestart
+
+Enable RDP - Windows 7 Professional
+- determine Windows OS: ver command
+- Windows 7 Pro x64:
+reg add "HKLM\System\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
+reg add "hklm\software\policies\microsoft\windows nt\terminal services" /v fDenyTSConnections /t REG_DWORD /d 0 /f
+- firewall command:
+netsh advfirewall firewall set rule group="Remote Desktop" new enable=Yes
+- check user in local group "Remote Desktop Users"
+net localgroup "Remote Desktop Users"
+- add user to RDP group
+net localgroup "Remote Desktop Users" meduser /add
+

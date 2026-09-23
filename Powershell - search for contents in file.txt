@@ -1,0 +1,1 @@
+Get-ChildItem -Path "D:\HTTPProxy\MagmonOutput" -Filter "*.txt" | Where-Object { $_.CreationTime -ge (Get-Date).AddDays(-5) } | Select-String -Pattern "509573MR450WC"

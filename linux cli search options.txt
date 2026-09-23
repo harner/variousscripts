@@ -1,0 +1,7 @@
+locate -b "\filename.txt"
+
+
+
+find / -type f -name "filename.txt" 2>/dev/null
+
+

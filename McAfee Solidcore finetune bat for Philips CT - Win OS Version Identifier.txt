@@ -1,0 +1,3665 @@
+phil mcafee solidcore finetune.bat
+
+@ECHO OFF
+REM Copyright (C) 2014 McAfee, Inc. All Rights Reserved.
+set value=%PROCESSOR_ARCHITECTURE%
+
+rem Finding OS version based on term "pre vista" and "above vista" 
+ver | find "5." > nul
+if %ERRORLEVEL% == 0 (
+    Set OS_VER=PRE_VISTA
+    Set ATTR_RULE=-b -c
+    GOTO BEGIN
+    )
+
+ver | find "6." > nul
+if %ERRORLEVEL% == 0 (
+    Set OS_VER=VISTA_PLUS
+    Set ATTR_RULE=-c
+    GOTO BEGIN
+    )
+
+:BEGIN
+IF "%1"=="ADD" GOTO ADD
+IF "%1"=="add" GOTO ADD
+IF "%1"=="REMOVE" GOTO REMOVE
+IF "%1"=="remove" GOTO REMOVE
+
+GOTO START
+:START
+ECHO Finetune.bat (Fine tunes solidifier for a Windows system)
+ECHO Copyright 2008 McAfee, Inc. All Rights Reserved
+ECHO.
+ECHO Add or remove solidifier customizations for a particular application
+ECHO.  
+ECHO finetune.bat add/remove APPLICATION
+ECHO. 
+ECHO add                 adds solidifier rules
+ECHO remove              removes solidifier rules
+ECHO APPLICATION         application for which you can add/remove 
+ECHO                     solidifier rules.
+ECHO.
+ECHO Specify the application indentifier from the list given below.
+ECHO. 
+ECHO. 
+ECHO ANTI VIRUS
+ECHO ==========
+ECHO A-McAfee            McAfee (8.0,9.0), McAfee virusscan (7.1,10.0),
+ECHO                     McAfee Enterprise 8.0,Mcafee Total Protection 4.7 
+ECHO A-Etrust            Etrust Version 7.0, Etrust Version 7.1, 
+ECHO                     Etrust Version 6.0, Etrust PestPatrol Anti-Spyware
+ECHO A-NAV               2005, NAV Corporate Editon (8.1, 10.1,10.2,9.0),
+ECHO                     NAV 2004,Norton Removal Tool, Norton 2008
+ECHO A-SPC		 Symantec PcAnywhere (11.5, 12.1)
+ECHO A-MSE		 Symantec Mail Security
+ECHO A-SMSMSE		 Symantec Mail Security for Exchange
+ECHO A-SEP		 Symantec Endpoint Protection
+ECHO A-Sophos            Sophos Version 5.1.3
+ECHO A-Avast             Avast Virus Cleaner  
+ECHO A-AVG               AVG Version 7.0 
+ECHO A-Fsecure           Fsecure2006, 2007, 2008, 2009 Anti Virus
+ECHO A-NOD32             NOD32 Anti Virus version 2.5
+ECHO A-TrendMicro        Trend Micro IMSSS, Client server security Agent,
+ECHO                     OfficeScan, Trend Micro Server Protect
+ECHO A-GDATA             GDATA version
+ECHO A-ZoneAlarm         Zone Alarm 6.1
+ECHO A-AVK               AVK version 
+ECHO A-BTD               BitDefender 9 prof plus, BitDefender 8,BitDefenderAVPlus10 Final
+ECHO A-FProt		 F-Prot AV 3.16f
+ECHO A-MCGroupShield	 McAfee Group shield for Exchange
+ECHO A-QHeal		 Quick Heal Total Security 2007
+ECHO A-QHealPlus	 Quick Heal Plus 2007
+ECHO A-Ksky	 	 Kaspersky Internet Security 7.0
+ECHO A-Panda	 	 Panda antivirus 2009
+ECHO A-InstNAV2011	 Install Norton 2011 
+ECHO.
+ECHO BACKUP/RESTORE
+ECHO ==============
+ECHO B-Veritas           Veritas Backup 10, Veritas Storage Cental
+ECHO B-Brightstor        BrightstorARCServe 9.0/11.5 BackupServer 
+ECHO B-Symantec          Symantec Backup Exec 11d
+ECHO.
+PAUSE
+ECHO.
+ECHO WINDOWS UPDATE 
+ECHO ==============
+ECHO U-WindowsUpdate     Windows Update from Start Menu,Scheduled Update,Help Method
+ECHO.
+ECHO MISCELLANEOUS
+ECHO =============
+ECHO M-Yahoo             Yahoo Messenger 6.0,7.0
+ECHO M-WC                Windows Components
+ECHO M-TS                Terminal Server in Application Server Mode
+ECHO M-VStudio              Visual Studio applications
+ECHO M-LDS               Lotus Domino sever 6.5.1
+ECHO M-Oracle9i          Oracle 9i   
+ECHO M-Oracle8i          Oracle 8i
+ECHO M-Winproxy          Winproxy 6.0   
+ECHO M-Weblogic          Weblogic 9.0,9.1
+ECHO M-MicrosoftExch     Microsoft Exchange 2000 with SP3
+ECHO M-.NETframe         .Net Framework 1.1, 2.0
+ECHO M-IIS               IIS 5   
+ECHO M-.NETserver        Visual Studio .Net (Server Objects)  
+ECHO M-MSAT              Microsoft Security Assessment Tool
+ECHO M-MST               Microsoft Security Tools- IIS LockDown Tool
+ECHO M-IP                Internet Printing
+ECHO M-CA                CA Unicenter
+ECHO M-CRP		 Crystal Reports
+ECHO M-LocalUser         loging in as a local user.
+ECHO M-GASP              GASP Report 7 
+ECHO M-PRINTER           Printer
+ECHO M-HPIM		 HP/Compaq insight manager
+ECHO M-LMS               Landesk Management Suite 8.6
+ECHO M-ASP               ASP.NET Framework
+ECHO M-ACR		 Adobe Acrobat
+ECHO M-uPnP              USB plug and play
+ECHO M-PGP               PGP Encryption tool
+ECHO M-SFC               Smart FTP Client
+ECHO M-CuteFTP		 CuteFTP
+ECHO M-IE                Internet Explorer 7.0, 6.0sp1 on 64 bit platforms
+ECHO M-Outlook64         Microsoft Outlook on 64 bit platforms
+ECHO M-SI                System Information
+ECHO M-FMon              FileMon application
+ECHO M-SQL               MySQL2005,MS SQL Server 2000
+ECHO M-SQL5              MySQL5
+ECHO M-IMail9            IMail9.1
+ECHO M-IMail2006         IMail2006
+ECHO M-SMS		 SMS 2003 Server
+ECHO M-SMSClient	 SMS 2003 Client
+ECHO M-WD		 Windows Defender (Beta 2) version 1.1.1347.0
+ECHO M-WM		 Windows Messenger 5.1
+ECHO M-WA		 WixAware
+ECHO M-NDA		 Netpro Directory Analyzer (NetPro DA)
+ECHO M-NCA		 Netpro Change Auditor for Active Directory (NetPro CAAD)
+ECHO M-QRM 		 Install and Run Quest Recovery Manager
+ECHO M-AD		 Windows AD server
+ECHO M-BUI		 Install and Run Install and Run St. Bernard UI Expert
+ECHO M-HPACU 		 HP Array Configuration Utility
+ECHO M-HPDP              HP Data Protector 5.5
+ECHO M-HPRSM		 HP Remote Support Software Manager
+ECHO M-IBMDR		 IBM Director 4.2
+ECHO M-IGOLD		 I Goldmine Server  
+ECHO M-VNC		 VNC Server/Viewer
+ECHO M-ZIP		 Win Zip
+ECHO M-VPC		 Microsoft Virtual PC
+ECHO M-OutlookExpress	 Microsoft Outlook Express
+ECHO M-Firefox		 Mozilla Firefox
+ECHO M-HP_QC		 HP Quality Center
+ECHO M-J2RE		 Java 2 Runtime
+ECHO M-DLP		 McAfee DLP Agent
+ECHO M-SymantecUpdate	 Symantec LiveUpdate
+ECHO M-IntelGD		 Install Intel (R) Extreme Graphics 2 Driver
+ECHO M-McAfeeAgent	 Install McAfee Agent
+ECHO M-SSLite		 SiSoftware Sandra Lite 2009
+ECHO M-2X		 2X ApplicationServer and LoadBalancer
+ECHO M-Altiris		 Altiris
+ECHO M-RemoteAW	 	 Remotely Anywhere
+ECHO M-AutoCAD	 	 AutoCAD
+ECHO M-UpdateMVM	 Update McAfee Vulnerability Manager
+ECHO M-RemAdmin	 	 Remote Administrator v2.1
+ECHO M-Apple		 Apple
+ECHO M-MMC		 Microsoft Management Console
+ECHO.
+ECHO ENTERPRISE APPLICATIONS
+ECHO =======================
+ECHO E-CitrixServer      Citrix Metaframe Presentation Server 3.0
+ECHO E-SUSServer         Windows Server Update Services 2.0(SUS)
+ECHO E-WSUSServer        Windows Server Update Services 2.0SP1
+ECHO E-TSMServer         Tivoli Storage Management Server 4.1.6,5.3.1.0(TSM)
+ECHO E-TSMClient 	 IBM Tivoli Storage Manager Client
+ECHO E-MOMServer	 MOM Server 2005
+ECHO E-SCOMServer	 System Center Operations Manager
+ECHO E-SCOMClient	 System Center Operations Client
+ECHO E-InstallSCOMClient Install System Center Operations Client
+ECHO E-BigFix		 BigFix Enterprise
+ECHO.
+ECHO For example, command to add rules for McAfee is:
+ECHO     finetune.bat ADD A-McAfee
+ECHO.
+ECHO Please note that application identifiers are case sensitive.
+ECHO.
+ECHO *****CRITICAL EXES - NOT TO BE ADDED IN FINETUNE.BAT*****
+ECHO The following exes can't be used as an updater: system.exe,smss.exe,svchost.exe,lsass.exe,
+ECHO services.exe,winlogon.exe,csrss.exe,notepad.exe,winword.exe,wordpad.exe,ntvdm.exe,userinit.exe,
+ECHO regedit.exe,explore.exe,Explorer.exe,Msiexec.exe,Cscript.exe,wscript.exe,cmd.exe
+ECHO.
+GOTO END_SCRIPT
+
+:ADD 
+ECHO *****ADDING solidifier CUSTOMIZATIONS*****
+ECHO.
+IF "%2"=="A-McAfee" GOTO ADD_AV_MCF
+IF "%2"=="a-McAfee" GOTO ADD_AV_MCF
+
+IF "%2"=="A-Etrust" GOTO ADD_AV_ET
+IF "%2"=="a-Etrust" GOTO ADD_AV_ET
+
+IF "%2"=="A-NAV" GOTO ADD_AV_NAV
+IF "%2"=="a-NAV" GOTO ADD_AV_NAV
+
+IF "%2"=="A-SPC" GOTO ADD_AV_SPC
+IF "%2"=="a-SPC" GOTO ADD_AV_SPC
+
+IF "%2"=="A-MSE" GOTO ADD_AV_MSE
+IF "%2"=="a-MSE" GOTO ADD_AV_MSE
+
+IF "%2"=="A-SMSMSE" GOTO ADD_AV_SMSMSE
+IF "%2"=="a-SMSMSE" GOTO ADD_AV_SMSMSE
+
+IF "%2"=="A-SEP" GOTO ADD_AV_SEP
+IF "%2"=="a-SEP" GOTO ADD_AV_SEP
+
+IF "%2"=="A-Sophos" GOTO ADD_AV_Sophos
+IF "%2"=="a-Sophos" GOTO ADD_AV_Sophos
+
+IF "%2"=="A-Avast" GOTO ADD_AV_Avast 
+IF "%2"=="a-Avast" GOTO ADD_AV_Avast 
+
+IF "%2"=="A-AVG" GOTO ADD_AV_AVG
+IF "%2"=="a-AVG" GOTO ADD_AV_AVG
+
+IF "%2"=="A-Fsecure" GOTO ADD_AV_Fsecure
+IF "%2"=="a-Fsecure" GOTO ADD_AV_Fsecure
+
+IF "%2"=="A-NOD32" GOTO ADD_AV_NOD32
+IF "%2"=="a-NOD32" GOTO ADD_AV_NOD32
+
+IF "%2"=="A-TrendMicro" GOTO ADD_AV_TrendMicro
+IF "%2"=="a-TrendMicro" GOTO ADD_AV_TrendMicro
+
+IF "%2"=="A-GDATA" GOTO ADD_AV_GDATA
+IF "%2"=="a-GDATA" GOTO ADD_AV_GDATA
+
+IF "%2"=="A-ZoneAlarm" GOTO ADD_AV_ZoneAlarm
+IF "%2"=="a-ZoneAlarm" GOTO ADD_AV_ZoneAlarm
+
+IF "%2"=="A-AVK" GOTO ADD_AV_AVK
+IF "%2"=="a-AVK" GOTO ADD_AV_AVK
+
+IF "%2"=="A-BTD" GOTO ADD_AV_BTD
+IF "%2"=="a-BTD" GOTO ADD_AV_BTD
+
+IF "%2"=="A-FProt" GOTO ADD_AV_FProt
+IF "%2"=="a-FProt" GOTO ADD_AV_FProt
+
+IF "%2"=="A-MCGroupShield" GOTO ADD_AV_MCGroupShield
+IF "%2"=="a-MCGroupShield" GOTO ADD_AV_MCGroupShield
+
+IF "%2"=="A-QHeal" GOTO ADD_AV_QHeal
+IF "%2"=="a-QHeal" GOTO ADD_AV_QHeal
+
+IF "%2"=="A-QHealPlus" GOTO ADD_AV_QHealPlus
+IF "%2"=="a-QHealPlus" GOTO ADD_AV_QHealPlus
+
+IF "%2"=="A-Ksky" GOTO ADD_AV_Ksky
+IF "%2"=="a-Ksky" GOTO ADD_AV_Ksky
+
+IF "%2"=="A-Panda" GOTO ADD_AV_Panda
+IF "%2"=="a-Panda" GOTO ADD_AV_Panda
+
+IF "%2"=="A-InstNAV2011" GOTO ADD_AV_Inst_NAV2011
+IF "%2"=="a-InstNAV2011" GOTO ADD_AV_Inst_NAV2011
+
+IF "%2"=="B-Veritas" GOTO ADD_BK_Veritas
+IF "%2"=="b-Veritas" GOTO ADD_BK_Veritas
+
+IF "%2"=="B-Brightstor" GOTO ADD_BK_Brightstor
+IF "%2"=="b-Brightstor" GOTO ADD_BK_Brightstor
+
+IF "%2"=="B-Symantec" GOTO ADD_BK_Symantec
+IF "%2"=="b-Symantec" GOTO ADD_BK_Symantec
+
+IF "%2"=="U-WindowsUpdate" GOTO ADD_UP_WindowsUpdate
+IF "%2"=="u-WindowsUpdate" GOTO ADD_UP_WindowsUpdate
+
+IF "%2"=="M-Yahoo" GOTO ADD_MIS_Yahoo
+IF "%2"=="m-Yahoo" GOTO ADD_MIS_Yahoo
+
+IF "%2"=="M-WC" GOTO ADD_MIS_WC
+IF "%2"=="m-WC" GOTO ADD_MIS_WC
+
+IF "%2"=="M-TS" GOTO ADD_MIS_TS
+IF "%2"=="m-TS" GOTO ADD_MIS_TS
+
+IF "%2"=="M-VStudio" GOTO ADD_MIS_VStudio
+IF "%2"=="m-VStudio" GOTO ADD_MIS_VStudio
+
+IF "%2"=="M-LDS" GOTO ADD_MIS_LDS
+IF "%2"=="m-LDS" GOTO ADD_MIS_LDS
+
+IF "%2"=="M-Oracle9i" GOTO ADD_MIS_Oracle9i
+IF "%2"=="m-oracle9i" GOTO ADD_MIS_Oracle9i
+
+IF "%2"=="M-Oracle8i" GOTO ADD_MIS_Oracle8i
+IF "%2"=="m-oracle8i" GOTO ADD_MIS_Oracle8i
+
+IF "%2"=="M-Winproxy" GOTO ADD_MIS_Winproxy
+IF "%2"=="m-Winproxy" GOTO ADD_MIS_Winproxy
+
+IF "%2"=="M-Weblogic" GOTO ADD_MIS_Weblogic
+IF "%2"=="m-Weblogic" GOTO ADD_MIS_Weblogic
+
+IF "%2"=="M-MicrosoftExch" GOTO ADD_MIS_MicrosoftExch
+IF "%2"=="m-MicrosoftExch" GOTO ADD_MIS_MicrosoftExch
+
+IF "%2"=="M-.NETframe" GOTO ADD_MIS_.NETframe
+IF "%2"=="m-.NETframe" GOTO ADD_MIS_.NETframe
+
+IF "%2"=="M-IIS" GOTO ADD_MIS_IIS
+IF "%2"=="m-IIS" GOTO ADD_MIS_IIS
+
+IF "%2"=="M-MMC" GOTO ADD_MIS_MMC
+IF "%2"=="m-MMC" GOTO ADD_MIS_MMC
+
+IF "%2"=="M-.NETserver" GOTO ADD_MIS_.NETserver
+IF "%2"=="m-.NETserver" GOTO ADD_MIS_.NETserver
+
+IF "%2"=="M-MSAT" GOTO ADD_MIS_MSAT
+IF "%2"=="m-MSAT" GOTO ADD_MIS_MSAT
+
+IF "%2"=="M-MST" GOTO ADD_MIS_MST
+IF "%2"=="m-MST" GOTO ADD_MIS_MST
+
+IF "%2"=="M-IP" GOTO ADD_MIS_IP
+IF "%2"=="m-IP" GOTO ADD_MIS_IP
+
+IF "%2"=="M-CA" GOTO ADD_MIS_CA
+IF "%2"=="m-CA" GOTO ADD_MIS_CA
+
+IF "%2"=="M-CRP" GOTO ADD_MIS_CRP
+IF "%2"=="m-CRP" GOTO ADD_MIS_CRP
+
+IF "%2"=="M-LocalUser" GOTO ADD_MIS_LocalUser
+IF "%2"=="m-LocalUser" GOTO ADD_MIS_LocalUser
+
+IF "%2"=="M-GASP" GOTO ADD_MIS_GASP
+IF "%2"=="m-GASP" GOTO ADD_MIS_GASP
+
+IF "%2"=="M-PRINTER" GOTO ADD_MIS_PR
+IF "%2"=="m-PRINTER" GOTO ADD_MIS_PR
+
+IF "%2"=="M-HPIM" GOTO ADD_MIS_HPIM
+IF "%2"=="m-HPIM" GOTO ADD_MIS_HPIM
+
+IF "%2"=="M-LMS" GOTO ADD_MIS_LMS
+IF "%2"=="m-LMS" GOTO ADD_MIS_LMS
+
+IF "%2"=="M-ASP" GOTO ADD_MIS_ASP
+IF "%2"=="m-ASP" GOTO ADD_MIS_ASP
+
+IF "%2"=="M-ACR" GOTO ADD_MIS_ACR
+IF "%2"=="m-ACR" GOTO ADD_MIS_ACR
+
+IF "%2"=="M-uPnP" GOTO ADD_MIS_uPnP 
+IF "%2"=="m-uPnP" GOTO ADD_MIS_uPnP 
+
+IF "%2"=="M-PGP" GOTO ADD_MIS_PGP 
+IF "%2"=="m-PGP" GOTO ADD_MIS_PGP 
+
+IF "%2"=="M-SFC" GOTO ADD_MIS_SFC
+IF "%2"=="m-SFC" GOTO ADD_MIS_SFC
+
+IF "%2"=="M-CuteFTP" GOTO ADD_MIS_CuteFTP
+IF "%2"=="m-CuteFTP" GOTO ADD_MIS_CuteFTP 
+
+IF "%2"=="M-IE" GOTO ADD_MIS_IE
+IF "%2"=="m-IE" GOTO ADD_MIS_IE
+
+
+IF "%2"=="M-Outlook64" GOTO ADD_MIS_OUTLOOK64
+IF "%2"=="m-Outlook64" GOTO ADD_MIS_OUTLOOK64
+
+IF "%2"=="M-SI" GOTO ADD_MIS_SI
+IF "%2"=="m-SI" GOTO ADD_MIS_SI
+
+IF "%2"=="M-FMon" GOTO ADD_MIS_FMon
+IF "%2"=="m-FMon" GOTO ADD_MIS_FMon
+
+IF "%2"=="M-SQL" GOTO ADD_MIS_SQL
+IF "%2"=="m-SQL" GOTO ADD_MIS_SQL
+
+IF "%2"=="M-SQL5" GOTO ADD_MIS_SQL5
+IF "%2"=="m-SQL5" GOTO ADD_MIS_SQL5
+
+IF "%2"=="M-IMail9" GOTO ADD_MIS_IMail9
+IF "%2"=="m-IMail9" GOTO ADD_MIS_IMail9
+
+IF "%2"=="M-IMail2006" GOTO ADD_MIS_IMail2006
+IF "%2"=="m-IMail2006" GOTO ADD_MIS_IMail2006
+
+IF "%2"=="M-SMS" GOTO ADD_MIS_SMS
+IF "%2"=="m-SMS" GOTO ADD_MIS_SMS
+
+IF "%2"=="M-SMSClient" GOTO ADD_MIS_SMSClient
+IF "%2"=="m-SMSClient" GOTO ADD_MIS_SMSClient
+
+IF "%2"=="M-WD" GOTO ADD_MIS_WD
+IF "%2"=="m-WD" GOTO ADD_MIS_WD
+
+IF "%2"=="M-WM" GOTO ADD_MIS_WM
+IF "%2"=="m-WM" GOTO ADD_MIS_WM
+
+IF "%2"=="M-WA" GOTO ADD_MIS_WA
+IF "%2"=="m-WA" GOTO ADD_MIS_WA
+
+IF "%2"=="M-NDA" GOTO ADD_MIS_NDA
+IF "%2"=="m-NDA" GOTO ADD_MIS_NDA
+
+IF "%2"=="M-NCA" GOTO ADD_MIS_NCA
+IF "%2"=="m-NCA" GOTO ADD_MIS_NCA
+
+IF "%2"=="M-QRM" GOTO ADD_MIS_QRM
+IF "%2"=="m-QRM" GOTO ADD_MIS_QRM
+
+IF "%2"=="M-AD" GOTO ADD_MIS_AD
+IF "%2"=="m-AD" GOTO ADD_MIS_AD
+
+IF "%2"=="M-BUI" GOTO ADD_MIS_BUI
+IF "%2"=="m-BUI" GOTO ADD_MIS_BUI
+
+IF "%2"=="M-HPACU" GOTO ADD_MIS_HPACU
+IF "%2"=="m-HPACU" GOTO ADD_MIS_HPACU
+
+IF "%2"=="M-HPDP" GOTO ADD_MIS_HPDP
+IF "%2"=="m-HPDP" GOTO ADD_MIS_HPDP
+
+IF "%2"=="M-HPRSM" GOTO ADD_MIS_HPRSM
+IF "%2"=="m-HPRSM" GOTO ADD_MIS_HPRSM
+
+IF "%2"=="M-IBMDR" GOTO ADD_MIS_IBMDR
+IF "%2"=="m-IBMDR" GOTO ADD_MIS_IBMDR
+
+IF "%2"=="M-IGOLD" GOTO ADD_MIS_IGOLD
+IF "%2"=="m-IGOLD" GOTO ADD_MIS_IGOLD
+
+IF "%2"=="M-VNC" GOTO ADD_MIS_VNC
+IF "%2"=="m-VNC" GOTO ADD_MIS_VNC
+
+IF "%2"=="M-ZIP" GOTO ADD_MIS_ZIP
+IF "%2"=="m-ZIP" GOTO ADD_MIS_ZIP
+
+IF "%2"=="M-VPC" GOTO ADD_MIS_VPC
+IF "%2"=="m-VPC" GOTO ADD_MIS_VPC
+
+IF "%2"=="M-Firefox" GOTO ADD_MIS_FF
+IF "%2"=="m-Firefox" GOTO ADD_MIS_FF
+
+IF "%2"=="M-HP_QC" GOTO ADD_MIS_HP_QC
+IF "%2"=="m-HP_QC" GOTO ADD_MIS_HP_QC
+
+IF "%2"=="M-J2RE" GOTO ADD_MIS_J2RE
+IF "%2"=="m-J2RE" GOTO ADD_MIS_J2RE
+
+IF "%2"=="M-OutlookExpress" GOTO ADD_MIS_OutlookExpress
+IF "%2"=="m-OutlookExpress" GOTO ADD_MIS_OutlookExpress
+
+IF "%2"=="M-DLP" GOTO ADD_MIS_DLPAgent
+IF "%2"=="m-DLP" GOTO ADD_MIS_DLPAgent
+
+IF "%2"=="M-SymantecUpdate" GOTO ADD_MIS_SLU
+IF "%2"=="m-SymantecUpdate" GOTO ADD_MIS_SLU
+
+IF "%2"=="M-IntelGD" GOTO ADD_MIS_IGD
+IF "%2"=="m-IntelGD" GOTO ADD_MIS_IGD
+
+IF "%2"=="M-McAfeeAgent" GOTO ADD_MIS_MAI
+IF "%2"=="m-McAfeeAgent" GOTO ADD_MIS_MAI
+
+IF "%2"=="M-SSLite" GOTO ADD_MIS_SSLite
+IF "%2"=="m-SSLite" GOTO ADD_MIS_SSLite
+
+IF "%2"=="M-2X" GOTO ADD_MIS_2X
+IF "%2"=="m-2X" GOTO ADD_MIS_2X
+
+IF "%2"=="M-Altiris" GOTO ADD_MIS_ALT
+IF "%2"=="m-Altiris" GOTO ADD_MIS_ALT
+
+IF "%2"=="M-Apple" GOTO ADD_MIS_Apple_iTunes
+IF "%2"=="m-Apple" GOTO ADD_MIS_Apple_iTunes
+
+IF "%2"=="M-RemoteAW" GOTO ADD_MIS_RAW
+IF "%2"=="m-RemoteAW" GOTO ADD_MIS_RAW
+
+IF "%2"=="M-AutoCAD" GOTO ADD_MIS_ACD
+IF "%2"=="m-AutoCAD" GOTO ADD_MIS_ACD
+	 	 
+IF "%2"=="M-UpdateMVM" GOTO ADD_MIS_MVM
+IF "%2"=="m-UpdateMVM" GOTO ADD_MIS_MVM
+
+IF "%2"=="M-RemAdmin" GOTO ADD_MIS_RA
+IF "%2"=="m-RemAdmin" GOTO ADD_MIS_RA
+
+IF "%2"=="E-CitrixServer" GOTO ADD_EA_CitrixServer
+IF "%2"=="e-CitrixServer" GOTO ADD_EA_CitrixServer
+
+IF "%2"=="E-SUSServer" GOTO ADD_EA_SUSServer
+IF "%2"=="e-SUSServer" GOTO ADD_EA_SUSServer
+
+IF "%2"=="E-WSUSServer" GOTO ADD_EA_WSUSServer
+IF "%2"=="e-WSUSServer" GOTO ADD_EA_WSUSServer
+
+IF "%2"=="E-TSMServer" GOTO ADD_EA_TSMServer
+IF "%2"=="e-TSMServer" GOTO ADD_EA_TSMServer
+
+IF "%2"=="E-TSMClient" GOTO ADD_EA_TSMClient
+IF "%2"=="e-TSMClient" GOTO ADD_EA_TSMClient
+
+IF "%2"=="E-MOMServer" GOTO ADD_EA_MOMServer
+IF "%2"=="e-MOMServer" GOTO ADD_EA_MOMServer
+
+IF "%2"=="E-SCOMServer" GOTO ADD_EA_SCOMServer
+IF "%2"=="e-SCOMServer" GOTO ADD_EA_SCOMServer
+
+IF "%2"=="E-SCOMClient" GOTO ADD_EA_SCOMClient
+IF "%2"=="e-SCOMClient" GOTO ADD_EA_SCOMClient
+
+IF "%2"=="E-InstallSCOMClient" GOTO ADD_EA_InstallSCOMClient
+IF "%2"=="e-InstallSCOMClient" GOTO ADD_EA_InstallSCOMClient
+
+IF "%2"=="E-BigFix" GOTO ADD_EA_BigFix
+IF "%2"=="e-BigFix" GOTO ADD_EA_BigFix
+GOTO BAD_IDENTIFIER
+
+:REMOVE
+ECHO *****REMOVING solidifier CUSTOMIZATIONS*****
+ECHO.
+IF "%2"=="A-McAfee" GOTO REMOVE_AV_MCF
+IF "%2"=="a-McAfee" GOTO REMOVE_AV_MCF
+
+IF "%2"=="A-Etrust" GOTO REMOVE_AV_ET
+IF "%2"=="a-Etrust" GOTO REMOVE_AV_ET
+
+IF "%2"=="A-NAV" GOTO REMOVE_AV_NAV
+IF "%2"=="a-NAV" GOTO REMOVE_AV_NAV
+
+IF "%2"=="A-SPC" GOTO REMOVE_AV_SPC
+IF "%2"=="a-SPC" GOTO REMOVE_AV_SPC
+
+IF "%2"=="A-MSE" GOTO REMOVE_AV_MSE
+IF "%2"=="a-MSE" GOTO REMOVE_AV_MSE
+
+IF "%2"=="A-SMSMSE" GOTO REMOVE_AV_SMSMSE
+IF "%2"=="a-SMSMSE" GOTO REMOVE_AV_SMSMSE
+
+IF "%2"=="A-SEP" GOTO REMOVE_AV_SEP
+IF "%2"=="a-SEP" GOTO REMOVE_AV_SEP
+
+IF "%2"=="A-Sophos" GOTO REMOVE_AV_Sophos
+IF "%2"=="a-Sophos" GOTO REMOVE_AV_Sophos
+
+IF "%2"=="A-Avast" GOTO REMOVE_AV_Avast 
+IF "%2"=="a-Avast" GOTO REMOVE_AV_Avast 
+
+IF "%2"=="A-AVG" GOTO REMOVE_AV_AVG
+IF "%2"=="a-AVG" GOTO REMOVE_AV_AVG
+
+IF "%2"=="A-Fsecure" GOTO REMOVE_AV_Fsecure
+IF "%2"=="a-Fsecure" GOTO REMOVE_AV_Fsecure
+
+IF "%2"=="A-NOD32" GOTO REMOVE_AV_NOD32
+IF "%2"=="a-NOD32" GOTO REMOVE_AV_NOD32
+
+IF "%2"=="A-TrendMicro" GOTO REMOVE_AV_TrendMicro
+IF "%2"=="a-TrendMicro" GOTO REMOVE_AV_TrendMicro
+
+IF "%2"=="A-GDATA" GOTO REMOVE_AV_GDATA
+IF "%2"=="a-GDATA" GOTO REMOVE_AV_GDATA
+
+IF "%2"=="A-ZoneAlarm" GOTO REMOVE_AV_ZoneAlarm
+IF "%2"=="a-ZoneAlarm" GOTO REMOVE_AV_ZoneAlarm
+
+IF "%2"=="A-AVK" GOTO REMOVE_AV_AVK
+IF "%2"=="a-AVK" GOTO REMOVE_AV_AVK
+
+IF "%2"=="A-BTD" GOTO REMOVE_AV_BTD
+IF "%2"=="a-BTD" GOTO REMOVE_AV_BTD
+
+IF "%2"=="A-FProt" GOTO REMOVE_AV_FProt
+IF "%2"=="a-FProt" GOTO REMOVE_AV_FProt
+
+IF "%2"=="A-MCGroupShield" GOTO REMOVE_AV_MCGroupShield
+IF "%2"=="a-MCGroupShield" GOTO REMOVE_AV_MCGroupShield
+
+IF "%2"=="A-QHeal" GOTO REMOVE_AV_QHeal
+IF "%2"=="a-QHeal" GOTO REMOVE_AV_QHeal
+
+IF "%2"=="A-QHealPlus" GOTO REMOVE_AV_QHealPlus
+IF "%2"=="a-QHealPlus" GOTO REMOVE_AV_QHealPlus
+
+IF "%2"=="A-Ksky" GOTO REMOVE_AV_Ksky
+IF "%2"=="a-Ksky" GOTO REMOVE_AV_Ksky
+
+IF "%2"=="A-Panda" GOTO REMOVE_AV_Panda
+IF "%2"=="a-Panda" GOTO REMOVE_AV_Panda
+
+IF "%2"=="A-InstNAV2011" GOTO REMOVE_AV_Inst_NAV2011
+IF "%2"=="a-InstNAV2011" GOTO REMOVE_AV_Inst_NAV2011
+
+IF "%2"=="B-Veritas" GOTO REMOVE_BK_Veritas
+IF "%2"=="b-Veritas" GOTO REMOVE_BK_Veritas
+
+IF "%2"=="B-Brightstor" GOTO REMOVE_BK_Brightstor
+IF "%2"=="b-Brightstor" GOTO REMOVE_BK_Brightstor
+
+
+IF "%2"=="B-Symantec" GOTO REMOVE_BK_Symantec
+IF "%2"=="b-Symantec" GOTO REMOVE_BK_Symantec
+
+IF "%2"=="U-WindowsUpdate" GOTO REMOVE_UP_WindowsUpdate
+IF "%2"=="u-WindowsUpdate" GOTO REMOVE_UP_WindowsUpdate
+
+IF "%2"=="M-Yahoo" GOTO REMOVE_MIS_Yahoo
+IF "%2"=="m-Yahoo" GOTO REMOVE_MIS_Yahoo
+
+IF "%2"=="M-WC" GOTO REMOVE_MIS_WC
+IF "%2"=="m-WC" GOTO REMOVE_MIS_WC
+
+IF "%2"=="M-TS" GOTO REMOVE_MIS_TS
+IF "%2"=="m-TS" GOTO REMOVE_MIS_TS
+
+IF "%2"=="M-VStudio" GOTO REMOVE_MIS_VStudio
+IF "%2"=="m-VStudio" GOTO REMOVE_MIS_VStudio
+
+IF "%2"=="M-LDS" GOTO REMOVE_MIS_LDS
+IF "%2"=="m-LDS" GOTO REMOVE_MIS_LDS
+
+IF "%2"=="M-Oracle9i" GOTO REMOVE_MIS_Oracle9i
+IF "%2"=="m-oracle9i" GOTO REMOVE_MIS_Oracle9i
+
+IF "%2"=="M-Oracle8i" GOTO REMOVE_MIS_Oracle8i
+IF "%2"=="m-oracle8i" GOTO REMOVE_MIS_Oracle8i
+
+IF "%2"=="M-Winproxy" GOTO REMOVE_MIS_Winproxy
+IF "%2"=="m-Winproxy" GOTO REMOVE_MIS_Winproxy
+
+IF "%2"=="M-Weblogic" GOTO REMOVE_MIS_Weblogic
+IF "%2"=="m-Weblogic" GOTO REMOVE_MIS_Weblogic
+
+IF "%2"=="M-MicrosoftExch" GOTO REMOVE_MIS_MicrosoftExch
+IF "%2"=="m-MicrosoftExch" GOTO REMOVE_MIS_MicrosoftExch
+
+IF "%2"=="M-.NETframe" GOTO REMOVE_MIS_.NETframe
+IF "%2"=="m-.NETframe" GOTO REMOVE_MIS_.NETframe
+
+IF "%2"=="M-IIS" GOTO REMOVE_MIS_IIS
+IF "%2"=="m-IIS" GOTO REMOVE_MIS_IIS
+
+IF "%2"=="M-.NETserver" GOTO REMOVE_MIS_.NETserver
+IF "%2"=="m-.NETserver" GOTO REMOVE_MIS_.NETserver
+
+IF "%2"=="M-MSAT" GOTO REMOVE_MIS_MSAT
+IF "%2"=="m-MSAT" GOTO REMOVE_MIS_MSAT
+
+IF "%2"=="M-MST" GOTO REMOVE_MIS_MST
+IF "%2"=="m-MST" GOTO REMOVE_MIS_MST
+
+IF "%2"=="M-IP" GOTO REMOVE_MIS_IP
+IF "%2"=="m-IP" GOTO REMOVE_MIS_IP
+
+IF "%2"=="M-CA" GOTO REMOVE_MIS_CA
+IF "%2"=="m-CA" GOTO REMOVE_MIS_CA
+
+IF "%2"=="M-CRP" GOTO REMOVE_MIS_CRP
+IF "%2"=="m-CRP" GOTO REMOVE_MIS_CRP
+
+IF "%2"=="M-LocalUser" GOTO REMOVE_MIS_LocalUser
+IF "%2"=="m-LocalUser" GOTO REMOVE_MIS_LocalUser
+
+IF "%2"=="M-GASP" GOTO REMOVE_MIS_GASP
+IF "%2"=="m-GASP" GOTO REMOVE_MIS_GASP
+
+IF "%2"=="M-Firefox" GOTO REMOVE_MIS_FF
+IF "%2"=="m-Firefox" GOTO REMOVE_MIS_FF
+
+IF "%2"=="M-HP_QC" GOTO REMOVE_MIS_HP_QC
+IF "%2"=="m-HP_QC" GOTO REMOVE_MIS_HP_QC
+
+IF "%2"=="M-J2RE" GOTO REMOVE_MIS_J2RE
+IF "%2"=="m-J2RE" GOTO REMOVE_MIS_J2RE
+
+IF "%2"=="M-DLP" GOTO REMOVE_MIS_DLPAgent
+IF "%2"=="m-DLP" GOTO REMOVE_MIS_DLPAgent
+
+IF "%2"=="M-SymantecUpdate" GOTO REMOVE_MIS_SLU
+IF "%2"=="m-SymantecUpdate" GOTO REMOVE_MIS_SLU
+
+IF "%2"=="M-IntelGD" GOTO REMOVE_MIS_IGD
+IF "%2"=="m-IntelGD" GOTO REMOVE_MIS_IGD
+
+IF "%2"=="M-McAfeeAgent" GOTO REMOVE_MIS_MAI
+IF "%2"=="m-McAfeeAgent" GOTO REMOVE_MIS_MAI
+
+IF "%2"=="M-SSLite" GOTO REMOVE_MIS_SSLite
+IF "%2"=="m-SSLite" GOTO REMOVE_MIS_SSLite
+
+IF "%2"=="M-2X" GOTO REMOVE_MIS_2X
+IF "%2"=="m-2X" GOTO REMOVE_MIS_2X
+
+IF "%2"=="M-Altiris" GOTO REMOVE_MIS_ALT
+IF "%2"=="m-Altiris" GOTO REMOVE_MIS_ALT
+
+IF "%2"=="M-Apple" GOTO REMOVE_MIS_Apple_iTunes
+IF "%2"=="m-Apple" GOTO REMOVE_MIS_Apple_iTunes
+
+IF "%2"=="M-RemoteAW" GOTO REMOVE_MIS_RAW
+IF "%2"=="m-RemoteAW" GOTO REMOVE_MIS_RAW
+
+IF "%2"=="M-AutoCAD" GOTO REMOVE_MIS_ACD
+IF "%2"=="m-AutoCAD" GOTO REMOVE_MIS_ACD
+
+IF "%2"=="M-UpdateMVM" GOTO REMOVE_MIS_MVM
+IF "%2"=="m-UpdateMVM" GOTO REMOVE_MIS_MVM
+
+IF "%2"=="M-RemAdmin" GOTO REMOVE_MIS_RA
+IF "%2"=="m-RemAdmin" GOTO REMOVE_MIS_RA
+
+IF "%2"=="M-PRINTER" GOTO REMOVE_MIS_PR
+IF "%2"=="m-PRINTER" GOTO REMOVE_MIS_PR
+
+IF "%2"=="M-HPIM" GOTO REMOVE_MIS_HPIM
+IF "%2"=="m-HPIM" GOTO REMOVE_MIS_HPIM
+
+IF "%2"=="M-LMS" GOTO REMOVE_MIS_LMS
+IF "%2"=="m-LMS" GOTO REMOVE_MIS_LMS
+
+IF "%2"=="M-ASP" GOTO REMOVE_MIS_ASP
+IF "%2"=="m-ASP" GOTO REMOVE_MIS_ASP
+
+IF "%2"=="M-ACR" GOTO REMOVE_MIS_ACR
+IF "%2"=="m-ACR" GOTO REMOVE_MIS_ACR
+
+IF "%2"=="M-uPnP" GOTO REMOVE_MIS_uPnP
+IF "%2"=="m-uPnP" GOTO REMOVE_MIS_uPnP
+
+IF "%2"=="M-PGP" GOTO REMOVE_MIS_PGP
+IF "%2"=="m-PGP" GOTO REMOVE_MIS_PGP
+
+IF "%2"=="M-SFC" GOTO REMOVE_MIS_SFC
+IF "%2"=="m-SFC" GOTO REMOVE_MIS_SFC
+
+IF "%2"=="M-CuteFTP" GOTO REMOVE_MIS_CuteFTP
+IF "%2"=="m-CuteFTP" GOTO REMOVE_MIS_CuteFTP 
+
+IF "%2"=="M-IE" GOTO REMOVE_MIS_IE
+IF "%2"=="m-IE" GOTO REMOVE_MIS_IE
+
+IF "%2"=="M-Outlook64" GOTO REMOVE_MIS_OUTLOOK64
+IF "%2"=="m-Outlook64" GOTO REMOVE_MIS_OUTLOOK64
+
+IF "%2"=="M-SI" GOTO REMOVE_MIS_SI
+IF "%2"=="m-SI" GOTO REMOVE_MIS_SI
+
+IF "%2"=="M-FMon" GOTO REMOVE_MIS_FMon
+IF "%2"=="m-FMon" GOTO REMOVE_MIS_FMon
+
+IF "%2"=="M-SQL" GOTO REMOVE_MIS_SQL
+IF "%2"=="m-SQL" GOTO REMOVE_MIS_SQL
+
+
+IF "%2"=="M-SQL5" GOTO REMOVE_MIS_SQL5
+IF "%2"=="m-SQL5" GOTO REMOVE_MIS_SQL5
+
+IF "%2"=="M-IMail9" GOTO REMOVE_MIS_IMail9
+IF "%2"=="m-IMail9" GOTO REMOVE_MIS_IMail9
+
+IF "%2"=="M-IMail2006" GOTO REMOVE_MIS_IMail2006
+IF "%2"=="m-IMail2006" GOTO REMOVE_MIS_IMail2006
+
+IF "%2"=="M-SMS" GOTO REMOVE_MIS_SMS
+IF "%2"=="m-SMS" GOTO REMOVE_MIS_SMS
+
+IF "%2"=="M-SMSClient" GOTO REMOVE_MIS_SMSClient
+IF "%2"=="m-SMSClient" GOTO REMOVE_MIS_SMSClient
+
+IF "%2"=="M-WD" GOTO REMOVE_MIS_WD
+IF "%2"=="m-WD" GOTO REMOVE_MIS_WD
+
+IF "%2"=="M-WM" GOTO REMOVE_MIS_WM
+IF "%2"=="m-WM" GOTO REMOVE_MIS_WM
+
+IF "%2"=="M-WA" GOTO REMOVE_MIS_WA
+IF "%2"=="m-WA" GOTO REMOVE_MIS_WA
+
+IF "%2"=="M-NDA" GOTO REMOVE_MIS_NDA
+IF "%2"=="m-NDA" GOTO REMOVE_MIS_NDA
+
+IF "%2"=="M-NCA" GOTO REMOVE_MIS_NCA
+IF "%2"=="m-NCA" GOTO REMOVE_MIS_NCA
+
+IF "%2"=="M-QRM" GOTO REMOVE_MIS_QRM
+IF "%2"=="m-QRM" GOTO REMOVE_MIS_QRM
+
+IF "%2"=="M-AD" GOTO REMOVE_MIS_AD
+IF "%2"=="m-AD" GOTO REMOVE_MIS_AD
+
+IF "%2"=="M-BUI" GOTO REMOVE_MIS_BUI
+IF "%2"=="m-BUI" GOTO REMOVE_MIS_BUI
+
+IF "%2"=="M-HPACU" GOTO REMOVE_MIS_HPACU
+IF "%2"=="m-HPACU" GOTO REMOVE_MIS_HPACU
+
+IF "%2"=="M-HPDP" GOTO REMOVE_MIS_HPDP
+IF "%2"=="m-HPDP" GOTO REMOVE_MIS_HPDP
+
+IF "%2"=="M-HPRSM" GOTO REMOVE_MIS_HPRSM
+IF "%2"=="m-HPRSM" GOTO REMOVE_MIS_HPRSM
+
+IF "%2"=="M-IBMDR" GOTO REMOVE_MIS_IBMDR
+IF "%2"=="m-IBMDR" GOTO REMOVE_MIS_IBMDR
+
+IF "%2"=="M-IGOLD" GOTO REMOVE_MIS_IGOLD
+IF "%2"=="m-IGOLD" GOTO REMOVE_MIS_IGOLD
+
+IF "%2"=="M-VNC" GOTO REMOVE_MIS_VNC
+IF "%2"=="m-VNC" GOTO REMOVE_MIS_VNC
+
+IF "%2"=="M-ZIP" GOTO REMOVE_MIS_ZIP
+IF "%2"=="m-ZIP" GOTO REMOVE_MIS_ZIP
+
+IF "%2"=="M-VPC" GOTO REMOVE_MIS_VPC
+IF "%2"=="m-VPC" GOTO REMOVE_MIS_VPC
+
+IF "%2"=="M-OutlookExpress" GOTO REMOVE_MIS_OutlookExpress
+IF "%2"=="m-OutlookExpress" GOTO REMOVE_MIS_OutlookExpress
+
+IF "%2"=="E-CitrixServer" GOTO REMOVE_EA_CitrixServer
+IF "%2"=="e-CitrixServer" GOTO REMOVE_EA_CitrixServer
+
+IF "%2"=="E-SUSServer" GOTO REMOVE_EA_SUSServer
+IF "%2"=="e-SUSServer" GOTO REMOVE_EA_SUSServer
+
+IF "%2"=="E-WSUSServer" GOTO REMOVE_EA_WSUSServer
+IF "%2"=="e-WSUSServer" GOTO REMOVE_EA_WSUSServer
+
+IF "%2"=="E-TSMServer" GOTO REMOVE_EA_TSMServer
+IF "%2"=="e-TSMServer" GOTO REMOVE_EA_TSMServer
+
+IF "%2"=="E-TSMClient" GOTO REMOVE_EA_TSMClient
+IF "%2"=="e-TSMClient" GOTO REMOVE_EA_TSMClient
+
+IF "%2"=="E-MOMServer" GOTO REMOVE_EA_MOMServer
+IF "%2"=="e-MOMServer" GOTO REMOVE_EA_MOMServer
+
+IF "%2"=="E-SCOMServer" GOTO REMOVE_EA_SCOMServer
+IF "%2"=="e-SCOMServer" GOTO REMOVE_EA_SCOMServer
+
+IF "%2"=="E-SCOMClient" GOTO REMOVE_EA_SCOMClient
+IF "%2"=="e-SCOMClient" GOTO REMOVE_EA_SCOMClient
+
+IF "%2"=="E-InstallSCOMClient" GOTO REMOVE_EA_InstallSCOMClient
+IF "%2"=="e-InstallSCOMClient" GOTO REMOVE_EA_InstallSCOMClient
+
+IF "%2"=="E-BigFix" GOTO REMOVE_EA_BigFix
+IF "%2"=="e-BigFix" GOTO REMOVE_EA_BigFix
+GOTO BAD_IDENTIFIER
+
+rem add and remove for macafee
+
+:ADD_AV_MCF
+ECHO Adding solidifier rules for Mcafee.
+ECHO.
+sadmin updaters add -t McAfee1 Frameworkservice.exe
+sadmin updaters add -t McAfee2 Msshield.exe
+sadmin updaters add -t McAfee3 Mcupdate.exe
+sadmin updaters add -t McAfee4 udaterui.exe
+sadmin updaters add -t McAfee5 Mghtml.exe
+sadmin updaters add -t McAfee6 Mcupdmgr.exe
+sadmin updaters add -t McAfee7 McShield.exe
+sadmin updaters add -t McAfee8 McScript.exe
+sadmin updaters add -t McAfee9 Mcappins.exe
+sadmin updaters add -t McAfee10 Framew~1.exe
+sadmin updaters add -t McAfee11 McScript_InUse.exe
+sadmin updaters add -t McAfee12 McVSEscn.exe
+sadmin updaters add -t McAfee13 mcvsshld.exe
+sadmin updaters add -t McAfee14 mcmnhdlr.exe
+sadmin updaters add -t McAfee15 Mcvsrte.exe
+sadmin updaters add -d -t McAfee16 -l mcinsctl.dll iexplore.exe
+sadmin updaters add -t McAfee17 scan32.exe
+sadmin updaters add -t McAfee18 FramePkg.exe
+sadmin updaters add -t McAfee19	-n mcods.exe
+sadmin updaters add -t McAfee20 mcshell.exe
+sadmin updaters add -t McAfee21 myAgtSvc.exe
+sadmin updaters add -t McAfee22 HtmlDlg.exe
+sadmin updaters add -t McAfee23 HIPSvc.exe
+sadmin updaters add -d -t McAfee24 mer.exe
+sadmin updaters add -t McAfee25 "ePolicy Orchestrator\Server\bin\tomcat5.exe"
+sadmin updaters add -t McAfee26 "VirusScan Enterprise\VsTskMgr.exe"
+sadmin updaters add -t McAfee27 "VirusScan Enterprise\x64\Scan64.exe"
+sadmin updaters add -t McAfee28 "VirusScan Enterprise\x64\EngineServer.exe"
+sadmin updaters add -t McAfee29 SBadduser.exe
+sadmin updaters add -t McAfee30 McTray.exe
+sadmin updaters add -t McAfee31 McSACore.exe
+sadmin updaters add -t McAfee32 firesvc.exe
+sadmin updaters add -t McAfee33 "Supportability\MVT\MvtApp.exe"
+sadmin updaters add -t McAfee34 RSSensor.exe
+sadmin updaters add -t McAfee35 FSDiscovery.exe
+sadmin updaters add -t McAfee36 FSAssessment.exe
+sadmin updaters add -t McAfee37 FSScanEngineSvc.exe
+sadmin updaters add -t McAfee38 ReportServer.exe
+sadmin updaters add -t McAfee39 FSScanCtrlSvc.exe
+sadmin updaters add -t McAfee40 McSvHost.exe
+sadmin updaters add -t McAfee41 McCHSvc.exe
+sadmin updaters add -t McAfee42 "ePolicy Orchestrator\EventParser.exe"
+sadmin updaters add -t McAfee43 "ePolicy Orchestrator\Server\bin\tomcat7.exe"
+sadmin updaters add -t McAfee44 McTELSvc.exe
+sadmin updaters add -t McAfee45 McTELUpd.exe
+sadmin updaters add -t McAfee46 "McAfee\Real Time\rtclient.exe"
+sadmin updaters add -t McAfee47 masvc.exe
+sadmin updaters add -t McAfee48 macmnsvc.exe
+sadmin updaters add -t McAfee49 macompatsvc.exe
+sadmin updaters add -t McAfee50 mvserver.exe
+sadmin updaters add -d -t Apache1 apache.exe
+sadmin auth -acu 803291bcc5aa45a0221b4016f62d63a26d3ee4af
+ECHO.
+
+IF "%OS_VER%" == "VISTA_PLUS" (
+sadmin attr add -v "McAfee\Common Framework\MfeServiceMgr.exe"
+	sadmin attr add -v "McAfee\Common Framework\naPrdMgr.exe"
+	sadmin attr add -v "McAfee\SystemCore\mcshield.exe"
+	sadmin attr add -v McCHSvc.exe
+	sadmin attr add -v "McAfee\Real Time\rtclient.exe"
+	sadmin attr add -v "McAfee\VirusScan Enterprise\mfeann.exe"
+	sadmin attr add -v "McAfee\VirusScan Enterprise\VsTskMgr.exe"
+	sadmin attr add -v "McAfee\Common Framework\FrameworkService.exe"
+	sadmin attr add -v "McAfee\Real Time Server\rtserver.exe"
+	sadmin attr add -v "searchprotocolhost.exe"
+	sadmin attr add -v "msiexec.exe"
+	sadmin attr add -v "xcopy.exe"
+	sadmin attr add -v "update.exe"
+	)
+ECHO.
+IF "%VALUE%" == "x86" (
+	sadmin attr add -c "searchprotocolhost.exe"
+	sadmin attr add -c "msiexec.exe"
+	sadmin attr add -c "xcopy.exe"
+	sadmin attr add -c "update.exe"
+	)
+ECHO.
+IF "%VALUE%" == "AMD64" (
+	sadmin attr add -n "searchprotocolhost.exe"
+	sadmin attr add -n "msiexec.exe"
+	sadmin attr add -n "xcopy.exe"
+	sadmin attr add -n "update.exe"
+	sadmin attr add -n "udaterui.exe"
+	sadmin attr add -n "naprdmgr.exe"
+	)
+ECHO.
+IF "%VALUE%" == "x86" (
+	IF "%OS_VER%" == "PRE_VISTA" (
+	    sadmin attr add -b frameworkservice.exe
+	    )
+	)
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_MCF
+ECHO Removing solidifier rules for Mcafee.
+ECHO.
+sadmin updaters remove  Frameworkservice.exe
+sadmin updaters remove  Msshield.exe
+sadmin updaters remove  Mcupdate.exe
+sadmin updaters remove  udaterui.exe
+sadmin updaters remove  Mghtml.exe
+sadmin updaters remove  Mcupdmgr.exe
+sadmin updaters remove  McShield.exe
+sadmin updaters remove  McScript.exe
+sadmin updaters remove  Mcappins.exe
+sadmin updaters remove  Framew~1.exe
+sadmin updaters remove  McScript_InUse.exe
+sadmin updaters remove  McVSEscn.exe
+sadmin updaters remove  mcvsshld.exe
+sadmin updaters remove  mcmnhdlr.exe
+sadmin updaters remove  Mcvsrte.exe
+sadmin updaters remove -l mcinsctl.dll iexplore.exe
+sadmin updaters remove scan32.exe
+sadmin updaters remove FramePkg.exe
+sadmin updaters remove mcods.exe
+sadmin updaters remove mcshell.exe
+sadmin updaters remove myAgtSvc.exe
+sadmin updaters remove HtmlDlg.exe
+sadmin updaters remove HIPSvc.exe
+sadmin updaters remove mer.exe
+sadmin updaters remove "ePolicy Orchestrator\server\bin\tomcat5.exe"
+sadmin updaters remove "VirusScan Enterprise\VsTskMgr.exe"
+sadmin updaters remove "VirusScan Enterprise\x64\Scan64.exe"
+sadmin updaters remove "VirusScan Enterprise\x64\EngineServer.exe"
+sadmin updaters remove SBadduser.exe
+sadmin updaters remove McTray.exe
+sadmin updaters remove McSACore.exe
+sadmin updaters remove firesvc.exe
+sadmin updaters remove "Supportability\MVT\MvtApp.exe"
+sadmin updaters remove RSSensor.exe
+sadmin updaters remove FSDiscovery.exe
+sadmin updaters remove FSAssessment.exe
+sadmin updaters remove FSScanEngineSvc.exe
+sadmin updaters remove ReportServer.exe
+sadmin updaters remove FSScanCtrlSvc.exe
+sadmin updaters remove McSvHost.exe
+sadmin updaters remove McCHSvc.exe
+sadmin updaters remove "ePolicy Orchestrator\EventParser.exe"
+sadmin updaters remove "ePolicy Orchestrator\Server\bin\tomcat7.exe"
+sadmin updaters remove McTELSvc.exe
+sadmin updaters remove McTELUpd.exe
+sadmin updaters remove "McAfee\Real Time\rtclient.exe"
+sadmin updaters remove masvc.exe
+sadmin updaters remove macmnsvc.exe
+sadmin updaters remove macompatsvc.exe
+sadmin updaters remove mvserver.exe
+sadmin updaters remove apache.exe
+sadmin auth -r 803291bcc5aa45a0221b4016f62d63a26d3ee4af
+IF "%OS_VER%" == "VISTA_PLUS" (
+	sadmin attr remove -v "McAfee\Common Framework\MfeServiceMgr.exe"
+	sadmin attr remove -v "McAfee\Common Framework\naPrdMgr.exe"
+	sadmin attr remove -v "McAfee\SystemCore\mcshield.exe"
+	sadmin attr remove -v McCHSvc.exe
+	sadmin attr remove -v "McAfee\Real Time\rtclient.exe"
+	sadmin attr remove -v "McAfee\VirusScan Enterprise\mfeann.exe"
+	sadmin attr remove -v "McAfee\VirusScan Enterprise\VsTskMgr.exe"
+	sadmin attr remove -v "McAfee\Common Framework\FrameworkService.exe"
+	sadmin attr remove -v "McAfee\Real Time Server\rtserver.exe"
+	sadmin attr remove -v "searchprotocolhost.exe"
+	sadmin attr remove -v "msiexec.exe"
+	sadmin attr remove -v "xcopy.exe"
+	sadmin attr remove -v "update.exe"
+	)
+ECHO.
+IF "%VALUE%" == "x86" (
+	sadmin attr remove -c "searchprotocolhost.exe"
+	sadmin attr remove -c "msiexec.exe"
+	sadmin attr remove -c "xcopy.exe"
+	sadmin attr remove -c "update.exe"
+	)
+ECHO.
+IF "%VALUE%" == "AMD64" (
+	sadmin attr remove -n "searchprotocolhost.exe"
+	sadmin attr remove -n "msiexec.exe"
+	sadmin attr remove -n "xcopy.exe"
+	sadmin attr remove -n "update.exe"
+	sadmin attr remove -n "udaterui.exe"
+	sadmin attr remove -n "naprdmgr.exe"
+	)
+
+IF "%VALUE%" == "x86" (
+	IF "%OS_VER%" == "PRE_VISTA" (
+	    ECHO.
+	    sadmin attr remove -b frameworkservice.exe
+	    ECHO.
+	    )
+	)
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Etrust
+:ADD_AV_ET
+ECHO Adding solidifier rules for Etrust...
+ECHO.
+sadmin updaters add -t ETrust1 InoRt.exe
+sadmin updaters add -t ETrust2 InoDist.exe
+sadmin updaters add -t ETrust3 isafe.exe
+sadmin updaters add -t ETrust4 cav.exe
+sadmin updaters add -t ETrust5 ppdoupdate.exe
+sadmin updaters add -t ETrust6 InocIT.exe
+sadmin updaters add -t ETrust7 Shellscn.exe
+sadmin updaters add -t ETrust8 vetmsg.exe
+sadmin updaters add -t ETrust9 PestPatrol5.exe
+sadmin updaters add -t ETrust10 InoTask.exe
+sadmin updaters add -t ETrust11 igateway.exe
+sadmin updaters add -t ETrust12 PPV5Updater.exe
+sadmin updaters add -t ETrust13 ppupdstub.exe
+sadmin updaters add -t ETrust14 PPActiveDetection.exe
+sadmin updaters add -t ETrust15 ppv5consumercl.exe
+sadmin updaters add -t ETrust16 ppmc.exe
+sadmin updaters add -t ETrust17 casc.exe
+sadmin updaters add -t ETrust18 caavguiscan.exe
+sadmin updaters add -t ETrust19 ccupdate.exe
+sadmin updaters add -t ETrust20 autodown.exe
+sadmin updaters add -t ETrust21 ITMDist.exe
+sadmin updaters add -t ETrust22 UpdatePatch.exe
+IF "%VALUE%" == "x86" (
+	IF "%OS_VER%" == "PRE_VISTA" (
+	    ECHO.
+	    sadmin attr add -b install.exe
+	    sadmin attr add -b casc.exe
+	    sadmin attr add -b caunst.exe
+	    sadmin attr add -b InoRpc.exe
+	    sadmin attr add -b ITMDist.exe
+	    sadmin attr add -b InoTask.exe
+	    sadmin attr add -b InoRT.exe
+	    ECHO.
+	    )
+	)
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_ET
+ECHO Removing solidifier rules for Etrust...
+ECHO.
+sadmin updaters remove InoRt.exe
+sadmin updaters remove InoDist.exe
+sadmin updaters remove isafe.exe
+sadmin updaters remove cav.exe
+sadmin updaters remove ppdoupdate.exe
+sadmin updaters remove InocIT.exe
+sadmin updaters remove Shellscn.exe
+sadmin updaters remove vetmsg.exe
+sadmin updaters remove PestPatrol5.exe
+sadmin updaters remove InoTask.exe
+sadmin updaters remove igateway.exe
+sadmin updaters remove PPV5Updater.exe
+sadmin updaters remove ppupdstub.exe
+sadmin updaters remove PPActiveDetection.exe
+sadmin updaters remove ppv5consumercl.exe
+sadmin updaters remove ppmc.exe
+sadmin updaters remove casc.exe
+sadmin updaters remove caavguiscan.exe
+sadmin updaters remove ccupdate.exe
+sadmin updaters remove autodown.exe
+sadmin updaters remove ITMDist.exe
+sadmin updaters remove UpdatePatch.exe
+IF "%VALUE%" == "x86" (
+	IF "%OS_VER%" == "PRE_VISTA" (
+	    ECHO.
+	    sadmin attr remove -b install.exe
+	    sadmin attr remove -b casc.exe
+	    sadmin attr remove -b caunst.exe
+	    sadmin attr remove -b InoRpc.exe
+	    sadmin attr remove -b ITMDist.exe
+	    sadmin attr remove -b InoTask.exe
+	    sadmin attr remove -b InoRT.exe
+	    ECHO.
+	    )
+	)
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+
+rem add and remove for NAV
+:ADD_AV_NAV
+ECHO Adding solidifier rules for Norton AntiVirus...
+ECHO EraserUtilDrv10621 is a dynamically generated file. Hence may be needed to 
+ECHO manually add.
+ECHO.
+sadmin updaters add -t Norton1 luall.exe
+sadmin updaters add -t Norton2 aupdate.exe
+sadmin updaters add -t Norton3 luComServer_2_6.exe
+sadmin updaters add -t Norton4 luComServer_2_5.exe
+sadmin updaters add -t Norton5 rtvscan.exe
+sadmin updaters add -d -t Norton6 Navw32.exe
+sadmin updaters add -d -t Norton7 IdsInst.exe
+sadmin updaters add -d -t Norton8 msi2.tmp
+sadmin updaters add -t Norton9 lucomserver.exe
+sadmin updaters add -d -t Norton10 msi12.tmp
+sadmin updaters add -t Norton11 VPDN_LU.exe
+sadmin updaters add -t Norton12 ccapp.exe
+sadmin updaters add -t Norton13 navapsvc.exe
+sadmin updaters add -t Norton14 msmsgs.exe
+sadmin updaters add -t Norton15 wuauclt.exe
+sadmin updaters add -d -t Norton16 VpTray.exe
+sadmin updaters add -t Norton17 VPC32.exe
+sadmin updaters add -t Norton18 UpdtNv28.exe
+sadmin updaters add -t Norton19 LRPatch.exe
+sadmin updaters add -t Norton20 CCEVTMGR.EXE
+sadmin updaters add -t Norton21 LUSETUP.EXE
+sadmin updaters add -t Norton22 NMain.exe
+sadmin updaters add -t Norton23 LuComServer_3_0.EXE
+sadmin updaters add -t Norton24 symlcsvc.exe 
+sadmin updaters add -t Norton25 ReporterSvc.exe
+sadmin updaters add -t Norton26 ccSvcHst.exe
+sadmin updaters add -t Norton27 AppSvc32.exe
+sadmin updaters add -t Norton28 LuComServer_3_1.EXE
+sadmin updaters add -t Norton29 UpdMgr.exe
+sadmin updaters add -t Norton30 sevinst.EXE
+sadmin updaters add -t Norton31 DlayUpd2.exe
+sadmin updaters add -t Norton32 LuComServer_2_7.EXE
+sadmin updaters add -t Norton33 SPA.EXE
+sadmin updaters add -t Norton34 SNDMon.exe
+sadmin updaters add -t Norton35 DefWatch.exe
+sadmin updaters add -t Norton36 DWHWizrd.exe
+sadmin updaters add -t Norton37 RemStart.exe
+sadmin updaters add -t Norton38 SymClnUp.exe 
+sadmin updaters add -t Norton39 nlnhook.exe
+sadmin updaters add -t Norton40 DoScan.exe
+sadmin updaters add -t Norton41 IcePack.exe
+sadmin updaters add -t Norton42 NscTop.exe
+sadmin updaters add -t Norton43 Norton_Removal_Tool.exe
+sadmin updaters add -t Norton45 SAVScan.exe
+sadmin updaters add -t Norton46 COHUpdt.exe
+sadmin updaters add -t Norton47 DlayUpdt.exe
+sadmin updaters add -t Norton48 SSAutoRN.exe
+sadmin updaters add -t Norton49 updecabi.exe
+sadmin updaters add -t Norton50 CfgWiz.exe
+sadmin updaters add -t Norton51 LUUPDATE.EXE
+sadmin updaters add -t Norton52 LuCallbackProxy.exe
+IF "%VALUE%" == "x86" (
+	ECHO.
+	IF "%OS_VER%" == "PRE_VISTA" (
+	    sadmin attr add -b NAV_2011.exe
+	    )
+	ECHO.
+	)
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_NAV
+ECHO Removing solidifier rules for Norton AntiVirus...
+ECHO.
+sadmin updaters remove luall.exe
+sadmin updaters remove aupdate.exe
+sadmin updaters remove luComServer_2_6.exe
+sadmin updaters remove luComServer_2_5.exe
+sadmin updaters remove rtvscan.exe
+sadmin updaters remove Navw32.exe
+sadmin updaters remove IdsInst.exe
+sadmin updaters remove msi2.tmp
+sadmin updaters remove lucomserver.exe
+sadmin updaters remove msi12.tmp
+sadmin updaters remove VPDN_LU.exe
+sadmin updaters remove ccapp.exe
+sadmin updaters remove navapsvc.exe
+sadmin updaters remove msmsgs.exe
+sadmin updaters remove wuauclt.exe
+sadmin updaters remove VpTray.exe
+sadmin updaters remove VPC32.exe
+sadmin updaters remove UpdtNv28.exe
+sadmin updaters remove LRPatch.exe
+sadmin updaters remove CCEVTMGR.EXE
+sadmin updaters remove LUSETUP.EXE
+sadmin updaters remove NMain.exe
+sadmin updaters remove LuComServer_3_0.EXE
+sadmin updaters remove symlcsvc.exe
+sadmin updaters remove ReporterSvc.exe
+sadmin updaters remove ccSvcHst.exe
+sadmin updaters remove AppSvc32.exe
+sadmin updaters remove LuComServer_3_1.EXE
+sadmin updaters remove UpdMgr.exe
+sadmin updaters remove SEVINST.EXE
+sadmin updaters remove DlayUpd2.exe
+sadmin updaters remove LuComServer_2_7.EXE
+sadmin updaters remove SPA.EXE
+sadmin updaters remove SNDMon.exe
+sadmin updaters remove DefWatch.exe
+sadmin updaters remove DWHWizrd.exe
+sadmin updaters remove RemStart.exe
+sadmin updaters remove SymClnUp.exe
+sadmin updaters remove nlnhook.exe
+sadmin updaters remove DoScan.exe
+sadmin updaters remove IcePack.exe
+sadmin updaters remove NscTop.exe
+sadmin updaters remove Norton_Removal_Tool.exe
+sadmin updaters remove SAVScan.exe
+sadmin updaters remove COHUpdt.exe
+sadmin updaters remove DlayUpdt.exe
+sadmin updaters remove SSAutoRN.exe
+sadmin updaters remove updecabi.exe
+sadmin updaters remove CfgWiz.exe
+sadmin updaters remove LUUPDATE.EXE
+sadmin updaters remove LuCallbackProxy.exe
+IF "%VALUE%" == "x86" (
+	ECHO.
+	IF "%OS_VER%" == "PRE_VISTA" (
+	    sadmin attr remove -b NAV_2011.exe
+	    )
+	ECHO.
+	)
+ECHO Rules removed successfully.
+GOTO END_SCRIPT
+
+rem add and remove for SPC
+:ADD_AV_SPC
+ECHO Adding solidifier rules for Symantec PcAnywhere ...
+ECHO.
+sadmin updaters add -t SymPC1 RemStart.exe
+sadmin updaters add -t SymPC2 ThDefault.exe 
+sadmin updaters add -t SymPC3 pcalu.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_SPC
+ECHO Removing solidifier rules for Symantec PcAnywhere ...
+ECHO.
+sadmin updaters remove RemStart.exe
+sadmin updaters remove ThDefault.exe
+sadmin updaters remove pcalu.exe
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for MSE
+:ADD_AV_MSE
+ECHO Adding solidifier rules for Symantec Mail Security 6.0...
+ECHO.
+sadmin updaters add -t SMSE1 CmafReportSrv.exe
+sadmin updaters add -t SMSE2 Symantec.Cmaf.UI.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_MSE
+ECHO Removing solidifier rules for Symantec Mail Security 6.0....
+ECHO.
+sadmin updaters remove CmafReportSrv.exe
+sadmin updaters remove Symantec.Cmaf.UI.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for SMSMSE
+:ADD_AV_SMSMSE
+ECHO Adding solidifier rules for Symantec Mail Security for Exchange ...
+ECHO.
+sadmin updaters add -t SMSMSE1 Symantec.MailSecurity.UI.exe 
+sadmin updaters add -t SMSMSE2 SAVFMSEUI.exe 
+sadmin updaters add -t SMSMSE3 SAVFMSECTRL.exe 
+sadmin updaters add -t SMSMSE4 SAVFMSETask.exe 
+sadmin updaters add -t SMSMSE5 HealthService.exe 
+sadmin updaters add -t SMSMSE6 SAVFMSESp.exe 
+sadmin updaters add -t SMSMSE7 CmafReportSrv.exe 
+sadmin updaters add -t SMSMSE8 Symantec.Cmaf.UI.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_SMSMSE
+ECHO Removing solidifier rules for Symantec Mail Security for Exchange ....
+ECHO.
+sadmin updaters remove Symantec.MailSecurity.UI.exe 
+sadmin updaters remove SAVFMSEUI.exe 
+sadmin updaters remove SAVFMSECTRL.exe 
+sadmin updaters remove SAVFMSETask.exe 
+sadmin updaters remove HealthService.exe 
+sadmin updaters remove SAVFMSESp.exe 
+sadmin updaters remove CmafReportSrv.exe 
+sadmin updaters remove Symantec.Cmaf.UI.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for SEP
+:ADD_AV_SEP
+ECHO Adding solidifier rules for Symantec Endpoint protection...
+ECHO.
+sadmin updaters add -t SEP1 SymCorpUI.exe
+sadmin updaters add -t SEP2 SmcGui.exe
+sadmin updaters add -t SEP3 LuCallbackProxy.exe
+sadmin updaters add -t SEP4 LuComServer_3_3.exe
+sadmin updaters add -t SEP5 Rtvscan.exe
+sadmin updaters add -t SEP6 SavUI.exe
+sadmin updaters add -t SEP7 SescLU.exe
+sadmin updaters add -t SEP8 SMC.exe
+sadmin updaters add -t SEP9 LUCOMS~1.exe
+sadmin updaters add -t SEP10 COHUpdt.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_SEP
+ECHO Removing solidifier rules for Symantec Endpoint protection....
+ECHO.
+sadmin updaters remove SymCorpUI.exe
+sadmin updaters remove SmcGui.exe
+sadmin updaters remove LuCallbackProxy.exe
+sadmin updaters remove LuComServer_3_3.exe
+sadmin updaters remove Rtvscan.exe
+sadmin updaters remove SavUI.exe
+sadmin updaters remove SescLU.exe
+sadmin updaters remove SMC.exe
+sadmin updaters remove LUCOMS~1.exe
+sadmin updaters remove COHUpdt.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Sophos
+:ADD_AV_Sophos
+ECHO Adding solidifier rules for Sophos...
+ECHO.
+sadmin updaters add -t Sophos1 ALsvc.exe
+sadmin updaters add -t Sophos2 ALUpdate.exe
+sadmin updaters add -t Sophos3 savmain.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_Sophos
+ECHO Removing solidifier rules for Sophos...
+ECHO.
+sadmin updaters remove ALsvc.exe
+sadmin updaters remove ALUpdate.exe
+sadmin updaters remove savmain.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Avast Virus
+:ADD_AV_Avast
+ECHO Adding solidifier rules for Avast AntiVirus...
+ECHO.
+sadmin updaters add -t Avast1 ashsimpl.exe
+sadmin updaters add -t Avast2 swwserv.exe
+sadmin updaters add -t Avast3 aswclnr.exe
+sadmin updaters add -t Avast4 ashDisp.exe
+sadmin updaters add -t Avast5 ashserv.exe
+sadmin updaters add -t Avast6 aswServ.exe
+sadmin updaters add -t Avast7 aswEnhcd.exe
+sadmin updaters add -t Avast8 aswdisp.exe
+sadmin updaters add -t Avast9 aswSimpl.exe
+sadmin updaters add -t Avast10 aswSimp2.exe
+sadmin updaters add -t Avast11 ashSimp2.exe
+sadmin updaters add -t Avast12 aswBoot.exe
+sadmin updaters add -t Avast13 ashWebSv.exe
+sadmin updaters add -t Avast14 avastsvc.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_Avast
+ECHO Removing solidifier Rules for Avast AntiVirus...
+ECHO.
+sadmin updaters remove ashsimpl.exe
+sadmin updaters remove swwserv.exe
+sadmin updaters remove aswclnr.exe
+sadmin updaters remove ashDisp.exe
+sadmin updaters remove ashserv.exe
+sadmin updaters remove aswServ.exe
+sadmin updaters remove aswEnhcd.exe
+sadmin updaters remove aswdisp.exe
+sadmin updaters remove aswSimpl.exe
+sadmin updaters remove aswSimp2.exe
+sadmin updaters remove ashSimp2.exe
+sadmin updaters remove aswBoot.exe
+sadmin updaters remove ashWebSv.exe
+sadmin updaters remove avastsvc.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for AVG
+:ADD_AV_AVG
+ECHO Adding solidifier Rules for AVG...
+ECHO.
+sadmin updaters add -t AVG1 avgw.exe
+sadmin updaters add -t AVG2 avgwb.dat
+sadmin updaters add -t AVG3 avgupsvc.exe
+sadmin updaters add -t AVG4 avginet.exe
+sadmin updaters add -t AVG5 avgscanx.exe
+sadmin updaters add -t AVG6 avgarkt.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_AVG
+ECHO Removing solidifier rules for AVG...
+ECHO.
+sadmin updaters remove avgw.exe
+sadmin updaters remove avgwb.dat
+sadmin updaters remove avgupsvc.exe
+sadmin updaters remove avginet.exe
+sadmin updaters remove avgscanx.exe
+sadmin updaters remove avgarkt.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Fsecure
+:ADD_AV_Fsecure
+ECHO Adding solidifier rules for Fsecure...
+ECHO.
+sadmin updaters add -t FSecure1 fssm32.exe
+sadmin updaters add -t FSecure2 ServiceWrapper-4476822.exe
+sadmin updaters add -t FSecure3 "F-Secure Automatic update.exe"
+sadmin updaters add -t FSecure4 fsm32.exe
+sadmin updaters add -t FSecure5 iLaunchr.exe
+sadmin updaters add -t FSecure6 fsbwsys.exe
+sadmin updaters add -t FSecure7 fspex.exe
+sadmin updaters add -t FSecure8 fsav32.exe
+sadmin updaters add -t FSecure9 fsma32.exe
+sadmin updaters add -t FSecure10 -p services.exe ServiceWrapper-7681197.exe
+sadmin updaters add -t FSecure11 fsavgui.exe
+sadmin updaters add -t FSecure12 VirusNews.exe
+ECHO.
+
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_Fsecure
+ECHO Removing solidifier rules for Fsecure...
+ECHO.
+sadmin updaters remove fssm32.exe
+sadmin updaters remove ServiceWrapper-4476822.exe
+sadmin updaters remove "F-Secure Automatic update.exe"
+sadmin updaters remove fsm32.exe
+sadmin updaters remove iLaunchr.exe
+sadmin updaters remove fsbwsys.exe
+sadmin updaters remove fspex.exe
+sadmin updaters remove fsav32.exe
+sadmin updaters remove fsma32.exe
+sadmin updaters remove -p services.exe ServiceWrapper-7681197.exe
+sadmin updaters remove fsavgui.exe
+sadmin updaters remove VirusNews.exe
+ECHO.
+
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for NOD32
+:ADD_AV_NOD32
+ECHO Adding solidifier rules for NOD32...
+ECHO.
+sadmin updaters add -t NOD1 nod32.exe
+sadmin updaters add -t NOD2 nod32kui.exe
+sadmin updaters add -t NOD3 ekrn.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_NOD32
+ECHO Removing solidifier rules forNOD32...
+ECHO.
+sadmin updaters remove nod32.exe
+sadmin updaters remove nod32kui.exe
+sadmin updaters remove ekrn.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for TrendMicro
+:ADD_AV_TrendMicro
+
+ECHO Adding solidifier rules for TrendMicro...
+ECHO.
+sadmin updaters add -t TrendMicro1 IsntSmtp.exe
+sadmin updaters add -t TrendMicro2 Scheduler.exe
+sadmin updaters add -t TrendMicro3 -p cmd.exe scheduler.exe
+sadmin updaters add -t TrendMicro4 NTRtscan.exe
+sadmin updaters add -t TrendMicro5 TmListen.exe
+sadmin updaters add -d -t TrendMicro6 PccNT.exe
+sadmin updaters add -t TrendMicro7 Spntsvc.exe
+sadmin updaters add -t TrendMicro8 EarthAgent.exe
+sadmin updaters add -t TrendMicro9 supportcustomizedpackage.exe
+sadmin updaters add -d -t TrendMicro10 Patch.exe 
+sadmin updaters add -d -t TrendMicro11 cmdprocessor.exe
+sadmin updaters add -t TrendMicro12 Pccguide.exe
+sadmin updaters add -t TrendMicro13 Pccmain.exe
+sadmin updaters add -t TrendMicro14 Tmas.exe
+sadmin updaters add -d -t TrendMicro15 -l jupdate.dll iexplore.exe
+sadmin updaters add -d -t TrendMicro16 tmasea.exe
+sadmin updaters add -t TrendMicro17 SMEX_Master.exe
+sadmin updaters add -t TrendMicro18 PccNT2.exe
+sadmin updaters add -t TrendMicro19 SfFnUp.exe
+sadmin updaters add -t TrendMicro20 SfCtlCom.exe
+sadmin updaters add -t TrendMicro21 Patch.exe
+sadmin updaters add -t TrendMicro22 UfSeAgnt.exe
+sadmin updaters add -t TrendMicro23 TMBMSRV.EXE
+sadmin updaters add -t TrendMicro24 TmProxy.exe
+sadmin updaters add -t TrendMicro25 coreServiceShell.exe
+sadmin updaters add -t TrendMicro26 SupportTool.exe
+sadmin updaters add -d -t Windows_Session_Manager1 SMSS.exe
+IF "%VALUE%" == "x86" (
+	sadmin attr add %ATTR_RULE% ReportServer.exe
+	sadmin attr add %ATTR_RULE% tmasea.exe
+	sadmin attr add %ATTR_RULE% PccNT2.exe
+	)
+
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_TrendMicro
+ECHO Removing solidifier rules for TrendMicro...
+ECHO.
+sadmin updaters remove IsntSmtp.exe
+sadmin updaters remove Scheduler.exe
+sadmin updaters remove -p cmd.exe scheduler.exe
+sadmin updaters remove NTRtscan.exe
+sadmin updaters remove TmListen.exe 
+sadmin updaters remove PccNT.exe
+sadmin updaters remove Spntsvc.exe
+sadmin updaters remove EarthAgent.exe
+sadmin updaters remove SMSS.exe 
+sadmin updaters remove Patch.exe
+sadmin updaters remove cmdprocessor.exe
+sadmin updaters remove Pccguide.exe
+sadmin updaters remove Pccmain.exe
+sadmin updaters remove Tmas.exe
+sadmin updaters remove -l jupdate.dll iexplore.exe
+sadmin updaters remove tmasea.exe
+sadmin updaters remove SMEX_Master.exe
+sadmin updaters remove PccNT2.exe
+sadmin updaters remove SfFnUp.exe
+sadmin updaters remove SfCtlCom.exe
+sadmin updaters remove Patch.exe
+sadmin updaters remove UfSeAgnt.exe
+sadmin updaters remove TMBMSRV.EXE
+sadmin updaters remove TmProxy.exe
+sadmin updaters remove coreServiceShell.exe
+sadmin updaters remove SupportTool.exe
+sadmin updaters remove supportcustomizedpackage.exe
+IF "%VALUE%" == "x86" (
+	sadmin attr remove %ATTR_RULE% ReportServer.exe
+	sadmin attr remove %ATTR_RULE% tmasea.exe
+	sadmin attr remove %ATTR_RULE% PccNT2.exe
+	)
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for GDATA
+:ADD_AV_GDATA
+ECHO Adding solidifier rules for GDATA...
+ECHO.
+sadmin updaters add -t GDATA1 AVKWCtl.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_GDATA
+ECHO Removing solidifier rules for GDATA...
+ECHO.
+sadmin updaters remove AVKWCtl.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Zone Alarm 6.1
+:ADD_AV_ZoneAlarm
+ECHO Adding solidifier rules for Zone Alarm 6.1...
+ECHO.
+sadmin updaters add -t ZoneAlarm1 vsmon.exe
+sadmin updaters add -t ZoneAlarm2 updclient.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_ZoneAlarm
+ECHO Removing solidifier rules for Zone Alarm 6.1...
+ECHO.
+sadmin updaters remove vsmon.exe
+sadmin updaters remove updclient.exe
+ECHO
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for AVK 2006
+:ADD_AV_AVK
+ECHO Adding solidifier rules for AVK 2006...
+ECHO.
+sadmin updaters add -t AVK1 avk.exe
+sadmin updaters add -t AVK2 avkproxy.exe
+sadmin updaters add -t AVK3 avkwctl.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_AVK
+ECHO Removing solidifier rules for AVK 2006...
+ECHO.
+sadmin updaters remove avk.exe
+sadmin updaters remove avkproxy.exe
+sadmin updaters remove avkwctl.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for BitDefender
+:ADD_AV_BTD
+ECHO Adding solidifier rules for BitDefender...
+ECHO.
+sadmin updaters add -t BTD1 livesrv.exe
+sadmin updaters add -t BTD2 upgrepl.exe
+sadmin updaters add -t BTD3 bdss.exe
+ECHO.
+IF "%VALUE%" == "x86" (
+	ECHO.
+	sadmin attr add %ATTR_RULE% bdss.exe
+	sadmin attr add %ATTR_RULE% bdnews.exe
+	sadmin attr add %ATTR_RULE% bdnagent.exe
+	sadmin attr add %ATTR_RULE% bdmcon.exe
+	sadmin attr add %ATTR_RULE% livesrv.exe
+	sadmin attr add %ATTR_RULE% bdswitch.exe
+	sadmin attr add %ATTR_RULE% bdoesrv.exe
+	ECHO.
+	)
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_BTD
+ECHO Removing solidifier rules for BitDefender...
+ECHO.
+sadmin updaters remove livesrv.exe
+sadmin updaters remove upgrepl.exe
+sadmin updaters remove bdss.exe
+ECHO.
+IF "%VALUE%" == "x86" (
+	ECHO.
+	sadmin attr remove %ATTR_RULE% bdss.exe
+	sadmin attr remove %ATTR_RULE% bdnews.exe
+	sadmin attr remove %ATTR_RULE% bdnagent.exe
+	sadmin attr remove %ATTR_RULE% bdmcon.exe
+	sadmin attr remove %ATTR_RULE% livesrv.exe
+	sadmin attr remove %ATTR_RULE% bdswitch.exe
+	sadmin attr remove %ATTR_RULE% bdoesrv.exe
+	ECHO.
+	)
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for F-Prot AV 3.16f
+:ADD_AV_FProt
+ECHO Adding solidifier rules for F-Prot AV 3.16f...
+ECHO.
+sadmin updaters add -t FProt1 Updater.exe
+ECHO.
+IF "%VALUE%" == "x86" (
+	ECHO.
+	sadmin attr add %ATTR_RULE% FPWin.exe
+	ECHO.
+	)
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_FProt
+ECHO Removing solidifier rules for F-Prot AV 3.16f...
+ECHO.
+sadmin updaters remove Updater.exe
+ECHO.
+IF "%VALUE%" == "x86" (
+	ECHO.
+	sadmin attr remove %ATTR_RULE% FPWin.exe
+	ECHO.
+	)
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+
+rem add and remove for MCGroupShield
+:ADD_AV_MCGroupShield
+ECHO Adding solidifier rules for MCGroupShield...
+ECHO.
+sadmin updaters add -t MCGroupShield1 RPCServ.exe
+ECHO.
+IF "%VALUE%" == "x86" (
+	ECHO.
+	sadmin attr add %ATTR_RULE% RPCServ.exe
+	ECHO.
+	)
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_MCGroupShield
+ECHO Removing solidifier rules for MCGroupShield...
+ECHO.
+sadmin updaters remove RPCServ.exe
+ECHO.
+IF "%VALUE%" == "x86" (
+	ECHO.
+	sadmin attr remove %ATTR_RULE% RPCServ.exe
+	ECHO.
+	)
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Quick Heal Total Security 2007
+:ADD_AV_QHeal
+ECHO Adding solidifier rules for Quick Heal Total Security 2007...
+ECHO.
+sadmin updaters add -t QHeal1 NTCLNSRV.EXE
+sadmin updaters add -t QHeal2 scanner.exe
+sadmin updaters add -t QHeal3 nativscn.exe
+sadmin updaters add -t QHeal4 EMLPROXY.EXE
+sadmin updaters add -t QHeal5 ONLNSVC.EXE
+sadmin updaters add -t QHeal6 SENSOR.EXE
+ECHO.
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_QHeal
+ECHO Removing solidifier rules for Quick Heal Total Security 2007...
+ECHO.
+sadmin updaters remove NTCLNSRV.EXE
+sadmin updaters remove scanner.exe
+sadmin updaters remove nativscn.exe
+sadmin updaters remove EMLPROXY.EXE
+sadmin updaters remove ONLNSVC.EXE
+sadmin updaters remove SENSOR.EXE
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Quick Heal Plus 2007
+:ADD_AV_QHealPlus
+ECHO Adding solidifier rules for Quick Heal Plus 2007...
+ECHO.
+sadmin updaters add -t QHealPlus1 wuauclt.exe
+sadmin updaters add -t QHealPlus2 scanner.exe
+sadmin updaters add -t QHealPlus3 QUICKUP.EXE
+ECHO.
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_QHealPlus
+ECHO Removing solidifier rules for Quick Heal Plus 2007...
+ECHO.
+sadmin updaters remove wuauclt.exe
+sadmin updaters remove scanner.exe
+sadmin updaters remove QUICKUP.EXE
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Kaspersky Internet Security 7.0
+:ADD_AV_Ksky
+ECHO Adding solidifier rules for Kaspersky Internet Security 7.0...
+ECHO.
+sadmin updaters add -t Ksky1 avp.exe
+ECHO.
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_Ksky
+ECHO Removing solidifier rules for Kaspersky Internet Security 7.0...
+ECHO.
+sadmin updaters remove avp.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Panda Antivirus 2009
+:ADD_AV_Panda
+ECHO Adding solidifier rules for Panda Antivirus 2009...
+ECHO.
+sadmin updaters add -t Panda1 Pavw.exe
+sadmin updaters add -t Panda2 pavjobs.exe
+sadmin updaters add -t Panda3 ApVxdWin.exe
+sadmin updaters add -t Panda4 avlite.exe
+sadmin updaters add -t Panda5 pavsrv51.exe
+sadmin updaters add -t Panda6 -p services.exe TPSrv.exe
+sadmin updaters add -t Panda7 PavFnSvr.exe
+ECHO.
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_Panda
+ECHO Removing solidifier rules for Panda Antivirus 2009...
+ECHO.
+sadmin updaters remove Pavw.exe
+sadmin updaters remove pavjobs.exe
+sadmin updaters remove ApVxdWin.exe
+sadmin updaters remove avlite.exe
+sadmin updaters remove pavsrv51.exe
+sadmin updaters remove -p services.exe TPSrv.exe
+sadmin updaters remove PavFnSvr.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Install Norton 2011 
+:ADD_AV_Inst_NAV2011
+ECHO Adding solidifier rules for Install Norton 2011
+ECHO.
+IF "%VALUE%" == "x86" (
+	IF "%OS_VER%" == "PRE_VISTA" (
+	    sadmin attr add -b NAV_2011.exe
+	    )
+	)
+ECHO.
+ECHO Rules added successfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_AV_Inst_NAV2011
+ECHO Removing solidifier rules for Install Norton 2011
+ECHO.
+IF "%VALUE%" == "x86" (
+	IF "%OS_VER%" == "PRE_VISTA" (
+	    sadmin attr remove -b NAV_2011.exe
+	    )
+	)
+ECHO.
+ECHO Rules removed successfully.
+GOTO END_SCRIPT
+
+rem add and remove for Veritas
+:ADD_BK_Veritas
+ECHO Adding solidifier rules for Veritas...
+ECHO.
+sadmin updaters add -t Veritas1 Bkupexec.exe
+sadmin updaters add -t Veritas2 beremote.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_BK_Veritas
+ECHO Removing solidifier rules for Veritas...
+ECHO.
+sadmin updaters remove Bkupexec.exe
+sadmin updaters remove beremote.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Brightstor Backup
+:ADD_BK_Brightstor
+ECHO Adding solidifier rules for Brightstor Backup...
+ECHO.
+sadmin updaters add -d -t BrightStor1 jobeng.exe
+sadmin updaters add -d -t BrightStor2 carunjob.exe
+ECHO.
+ECHO Rules added sucessfully. 
+GOTO END_SCRIPT_ADD
+
+:REMOVE_BK_Brightstor
+ECHO Removing solidifier rules for Brightstor Backup...
+ECHO.
+sadmin updaters remove jobeng.exe
+sadmin updaters remove carunjob.exe 
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Symantec Backup
+:ADD_BK_Symantec
+ECHO Adding solidifier rules for Symantec Backup...
+ECHO.
+sadmin updaters add -t Backup1 beserver.exe
+sadmin updaters add -t Backup2 DLOAdminSvcu.exe
+sadmin updaters add -t Backup3 BkupExec.exe
+ECHO.
+ECHO Rules added sucessfully. 
+GOTO END_SCRIPT_ADD
+
+:REMOVE_BK_Symantec
+ECHO Removing solidifier rules for Symantec Backup...
+ECHO.
+sadmin updaters remove beserver.exe
+sadmin updaters remove DLOAdminSvcu.exe
+sadmin updaters remove BkupExec.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for windows update from Start Menu,scheduled update,help update
+:ADD_UP_WindowsUpdate
+ECHO Adding solidifier rules for Windows Update...
+ECHO.
+sadmin updaters add -t Win_Up_Start1 -l system32\wuauserv.dll svchost.exe
+sadmin updaters add -t Win_Up_Start2 -l system32\wuaueng.dll svchost.exe
+sadmin updaters add -d -t Win_Up_Start3 -l wuweb.dll iexplore.exe
+sadmin updaters add -t Win_Up_Start4 -p svchost.exe wuauclt.exe
+sadmin updaters add -t Win_Up_Start5 -p svchost.exe update.exe
+sadmin updaters add -t Win_Up_Start7 -p svchost.exe bitinst.exe
+sadmin updaters add -d -t Win_Up_Start8 winlogon.exe
+sadmin updaters add -t Win_Up_Start9 helpctr.exe
+sadmin updaters add -t Win_Up_Start10 mscorsvw.exe
+sadmin updaters add -d -t Win_Up_Start11 MRT.exe
+sadmin updaters add -t Win_Up_Start12 poqexec.exe
+sadmin updaters add -t RemoteSessionInstall1 -p winlogon.exe msiexec.exe
+sadmin updaters add -t TrustedInstaller1 -p services.exe TrustedInstaller.exe
+sadmin updaters add -t DrvInst1 -p svchost.exe drvinst.exe
+sadmin updaters add -t Win_Up_Start13 QueryAppBlock.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_UP_WindowsUpdate
+ECHO Removing solidifier rules for Windows Update...
+ECHO.
+sadmin updaters remove -l system32\wuauserv.dll svchost.exe
+sadmin updaters remove -l system32\wuaueng.dll svchost.exe
+sadmin updaters remove -l wuweb.dll iexplore.exe
+sadmin updaters remove -p svchost.exe wuauclt.exe
+sadmin updaters remove -p svchost.exe update.exe
+sadmin updaters remove -p svchost.exe bitinst.exe
+sadmin updaters remove winlogon.exe
+sadmin updaters remove helpctr.exe
+sadmin updaters remove mscorsvw.exe
+sadmin updaters remove -p winlogon.exe msiexec.exe
+sadmin updaters remove -p services.exe TrustedInstaller.exe
+sadmin updaters remove -p svchost.exe drvinst.exe
+sadmin updaters remove poqexec.exe
+sadmin updaters remove mrt.exe
+sadmin updaters remove QueryAppBlock.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for yahoo
+:ADD_MIS_Yahoo
+ECHO Adding solidifier rules for Yahoo...
+ECHO.
+sadmin updaters add -t Yahoo_Msg1 ypager.exe
+sadmin updaters add -t Yahoo_Msg2 yudptemp.exe
+sadmin updaters add -t Yahoo_Msg3 yupdater.exe
+sadmin updaters add -t Yahoo_Msg4 UNWISE.EXE
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_MIS_Yahoo
+ECHO Removing solidifier rules for Yahoo...
+ECHO.
+sadmin updaters remove ypager.exe
+sadmin updaters remove yudptemp.exe
+sadmin updaters remove yupdater.exe
+sadmin updaters remove UNWISE.EXE
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Windows Components
+:ADD_MIS_WC
+ECHO Adding solidifier rules for Windows Components...
+ECHO.
+sadmin updaters add -d -t Win_Comp1 sysocmgr.exe
+sadmin updaters add -d -t Win_Comp2 cleanmgr.exe
+sadmin updaters add -d -t Win_Comp3 shrpubw.exe
+sadmin updaters add -d -t Win_Comp4 dfssvc.exe
+sadmin updaters add -t Win_Comp5 wmiadap.exe
+sadmin updaters add -t Win_Comp6 compmgmtlauncher.exe
+sadmin updaters add -t Win_Comp7 ServerManagerLauncher.exe
+sadmin updaters add -t Win_Comp8 -p svchost.exe wmiprvse.exe
+
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_MIS_WC
+ECHO Removing solidifier rules for Windows Components...
+ECHO.
+sadmin updaters remove sysocmgr.exe
+sadmin updaters remove cleanmgr.exe
+sadmin updaters remove shrpubw.exe
+sadmin updaters remove dfssvc.exe
+sadmin updaters remove wmiadap.exe
+sadmin updaters remove compmgmtlauncher.exe
+sadmin updaters remove ServerManagerLauncher.exe
+sadmin updaters remove -p svchost.exe wmiprvse.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Terminal Server in Application Server Mode
+:ADD_MIS_TS
+ECHO Adding solidifier rules for Terminal Server...
+ECHO.
+sadmin updaters add -t Terminal_Server1 -p userinit.exe cmd.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_MIS_TS
+ECHO Removing solidifier rules for Terminal Server...
+ECHO.
+sadmin updaters remove -p userinit.exe cmd.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+
+rem add and remove for Visual Studio applications
+:ADD_MIS_VStudio
+ECHO Adding solidifier rules for Visual Studio applications...
+ECHO.
+sadmin updaters add -d -t VStudio1 devenv.exe
+sadmin updaters add -t VStudio2 vcspawn.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_MIS_VStudio
+ECHO Removing solidifier rules for Visual Studio applications...
+ECHO.
+sadmin updaters remove devenv.exe
+sadmin updaters remove vcspawn.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Lotus Domino sever 6.5.1
+:ADD_MIS_LDS
+ECHO Adding solidifier rules for Lotus Domino sever 6...
+ECHO.
+sadmin updaters add -d -t LDS1 nserver.exe
+sadmin updaters add -d -t LDS2 nhttp.exe
+sadmin updaters add -d -t LDS3 namgr.exe
+sadmin updaters add -d -t LDS4 nsched.exe
+sadmin updaters add -t LDS5 nchronos.exe
+sadmin updaters add -t LDS6 nstatlog.exe
+sadmin updaters add -t LDS7 nobject.exe
+sadmin updaters add -t LDS8 nupdall.exe
+sadmin updaters add -t LDS9 ndesign.exe
+sadmin updaters add -t LDS10 ncatalog.exe
+sadmin updaters add -t LDS11 ncldbdir.exe
+sadmin updaters add -t LDS12 ncompact.exe
+sadmin updaters add -t LDS13 ndctest.exe
+sadmin updaters add -t LDS14 ndecs.exe
+sadmin updaters add -t LDS15 nfixup.exe
+sadmin updaters add -t LDS16 nicm.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_MIS_LDS
+ECHO Removing solidifier rules for Lotus Domino sever 6.5.1...
+ECHO.
+sadmin updaters remove nserver.exe
+sadmin updaters remove nhttp.exe
+sadmin updaters remove namgr.exe
+sadmin updaters remove nsched.exe
+sadmin updaters remove nchronos.exe
+sadmin updaters remove nstatlog.exe
+sadmin updaters remove nobject.exe
+sadmin updaters remove nupdall.exe
+sadmin updaters remove ndesign.exe
+sadmin updaters remove ncatalog.exe
+sadmin updaters remove ncldbdir.exe
+sadmin updaters remove ncompact.exe
+sadmin updaters remove ndctest.exe
+sadmin updaters remove ndecs.exe
+sadmin updaters remove nfixup.exe
+sadmin updaters remove nicm.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Oracle 9i
+:ADD_MIS_Oracle9i
+ECHO Adding solidifier rules for Oracle 9i...
+ECHO.
+sadmin updaters add -t Oracle9i1 OMSNTsrv.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_MIS_Oracle9i
+ECHO Removing solidifier rules for Oracle 9i...
+ECHO.
+sadmin updaters remove OMSNTsrv.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Oracle 8i
+:ADD_MIS_Oracle8i
+ECHO Adding solidifier rules for Oracle 8i...
+ECHO.
+sadmin updaters add -t Oracle8i1 odbctst.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_MIS_Oracle8i
+ECHO Removing solidifier rules for Oracle 8i...
+ECHO.
+sadmin updaters remove odbctst.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Winproxy6.0
+:ADD_MIS_Winproxy
+ECHO Adding solidifier rules for Winproxy 6.0...
+ECHO.
+sadmin updaters add -d -t Winproxy1 WinProxy.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_MIS_Winproxy
+ECHO Removing solidifier rules for Winproxy 6.0...
+ECHO.
+sadmin updaters remove WinProxy.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Weblogic 9.0
+:ADD_MIS_Weblogic
+ECHO Adding solidifier rules for Weblogic 9.0...
+ECHO.
+IF "%VALUE%" == "AMD64" (
+	ECHO.
+	sadmin attr add -n java.exe
+	sadmin attr add -n javaw.exe
+	ECHO.
+	)
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_MIS_Weblogic
+ECHO Removing solidifier rules for Weblogic 9.0...
+ECHO.
+IF "%VALUE%" == "AMD64" (
+	ECHO.
+	sadmin attr remove -n java.exe
+	sadmin attr remove -n javaw.exe
+	ECHO.
+	)
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Microsoft Exchange 2000 with SP3
+:ADD_MIS_MicrosoftExch
+ECHO Adding solidifier rules for Microsoft Exchange 2000 with SP3...
+ECHO.
+sadmin updaters add -d -t MicrosoftExch1 Admin.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_MIS_MicrosoftExch
+ECHO Removing solidifier rules for Microsoft Exchange 2000 with SP3...
+ECHO.
+sadmin updaters remove Admin.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for .Net Framework 1.1, 2.0
+:ADD_MIS_.NETframe
+ECHO Adding solidifier rules for .Net Framework 1.1, 2.0...
+ECHO.
+ECHO Install.exe and Setup.exe should be added as a bypass candidate for .NEt Framework installation. 
+ECHO Please remove them after the installation of .NEt Framework is complete!!
+ECHO.
+sadmin updaters add -t .NETFrame1 aspnet_wp.exe
+sadmin updaters add -t .NETFrame2 ConfigWizards.exe
+sadmin updaters add -t .NETFrame3 mscorsvw.exe
+sadmin updaters add -t .NETFrame4 netfxupdate.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_MIS_.NETframe
+ECHO Removing solidifier rules for .Net Framework 1.1, 2.0...
+ECHO.
+sadmin updaters remove aspnet_wp.exe
+sadmin updaters remove ConfigWizards.exe
+sadmin updaters remove mscorsvw.exe
+sadmin updaters remove netfxupdate.exe
+IF "%VALUE%" == "x86" (
+	ECHO.
+	sadmin attr remove %ATTR_RULE% Dotnetfx.exe
+	rem sadmin attr remove %ATTR_RULE% Install.exe
+	rem sadmin attr remove %ATTR_RULE% Setup.exe
+	sadmin attr remove %ATTR_RULE% Regsvcs.exe
+	sadmin attr remove %ATTR_RULE% mofcomp.exe
+	ECHO.
+	)
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for IIS 5
+:ADD_MIS_IIS
+ECHO Adding solidifier rules for IIS 5...
+ECHO.
+sadmin updaters add -t IIS1 MBExplorer.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_MIS_IIS
+ECHO Removing solidifier rules for IIS 5...
+ECHO.
+sadmin updaters remove MBExplorer.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+rem add and remove for Microsoft Management Console
+:ADD_MIS_MMC
+ECHO Adding solidifier rules for Microsoft Management Console...
+ECHO.
+sadmin updaters add -d -t MMC1 mmc.exe
+ECHO.
+ECHO Rules added sucessfully.
+GOTO END_SCRIPT_ADD
+
+:REMOVE_MIS_MMC
+ECHO Removing solidifier rules for Microsoft Management Console...
+ECHO.
+sadmin updaters remove mmc.exe
+ECHO.
+ECHO Rules removed sucessfully.
+GOTO END_SCRIPT
+
+
+rem add and remove for Visual Studio .Net (Server Objects)
+    :ADD_MIS_.NETserver
+     ECHO Adding solidifier rules for Visual Studio .Net (Server Objects)...
+     ECHO.
+     sadmin updaters add -d -t .NETServer1 aspnet_wp.exe
+     sadmin updaters add -d -t .NETServer2 w3wp.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_.NETserver
+     ECHO Removing solidifier rules for Visual Studio .Net (Server Objects)...
+     ECHO.
+     sadmin updaters remove aspnet_wp.exe
+     sadmin updaters remove w3wp.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Microsoft Security Assessment Tool
+     :ADD_MIS_MSAT
+     ECHO Adding solidifier rules for Microsoft Security Assessment Tool...
+     IF "%VALUE%" == "x86" (
+	     ECHO.
+	     sadmin attr add %ATTR_RULE% msat.exe
+	     ECHO.
+	     )
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_MSAT
+     ECHO Removing solidifier rules for Microsoft Security Assessment Tool...
+     IF "%VALUE%" == "x86" (
+	     ECHO.
+	     sadmin attr remove %ATTR_RULE% msat.exe
+	     ECHO.
+	     )
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Microsoft Security Tools- IIS LockDown Tool
+     :ADD_MIS_MST
+     ECHO Adding solidifier rules for Microsoft Security Tools- IIS LockDown Tool...
+     ECHO.
+     sadmin updaters add -d -t MST1 iislockd.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_MST
+     ECHO Removing solidifier rules for Microsoft Security Tools-IIS LockDown Tool...
+     ECHO.
+     sadmin updaters remove iislockd.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Internet Printing
+     :ADD_MIS_IP
+     ECHO Adding solidifier rules for Internet Printing...
+     ECHO Warning: dllhost.exe should be added as an updater for Windows XP only.
+     ECHO.
+     sadmin updaters add -t IP1 dllhost.exe
+     sadmin updaters add -t IP2 w3wp.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_IP
+     ECHO Removing solidifier rules for Internet Printing...
+     ECHO.
+     sadmin updaters remove dllhost.exe
+     sadmin updaters remove w3wp.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for CA Unicenter
+     :ADD_MIS_CA
+     ECHO Adding solidifier rules for CA Unicenter...
+     ECHO.
+     sadmin updaters add -t CA1 Sdjexec.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_CA
+     ECHO Removing solidifier rules for CA Unicenter...
+     ECHO.
+     sadmin updaters remove Sdjexec.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for crystal Reports
+     :ADD_MIS_CRP
+     ECHO Adding solidifier rules for Crytal reports...
+     ECHO.
+     sadmin updaters add -t CRP1 crw32.exe
+     sadmin updaters add -t CRP2 agent.exe
+     sadmin updaters add -t CRP3 ISDM.exe
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_CRP
+     ECHO Removing solidifier rules for Crystal Reports...
+     ECHO.
+     sadmin updaters remove crw32.exe
+     sadmin updaters remove agent.exe
+     sadmin updaters remove ISDM.exe
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for logining in as a local user.
+     :ADD_MIS_LocalUser
+     ECHO Adding solidifier rules for logining in as a local user...
+     ECHO.
+     sadmin updaters add -d -t LocalUser1 GRPCONV.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_LocalUser
+     ECHO Removing solidifier rules for logining in as a local user...
+     ECHO.
+     sadmin updaters remove GRPCONV.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for GASP
+     :ADD_MIS_GASP
+     ECHO Adding solidifier rules for GASP Report 7...
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_GASP
+     ECHO Removing solidifier rules for GASP Report 7...
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for PRINTER 
+     :ADD_MIS_PR
+     ECHO Adding solidifier rules for printer...
+     ECHO.
+     sadmin updaters add -t PRINTER1 spoolsv.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_PR
+     ECHO Removing solidifier rules for printer...
+     ECHO.
+     sadmin updaters remove spoolsv.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for HP Insight Manager
+     :ADD_MIS_HPIM
+     ECHO Adding solidifier rules for HP/Compaq insight manager...
+     ECHO.
+     sadmin updaters add -t HPIM1 cqmghost.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_HPIM
+     ECHO Removing solidifier rules for HP/Compaq insight manager...
+     ECHO.
+     sadmin updaters remove cqmghost.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for LMS
+     :ADD_MIS_LMS
+     ECHO Adding solidifier rules for Landesk Management Suite 8.6...
+     ECHO.
+     sadmin updaters add -t LMS1 stamper.exe 
+     sadmin updaters add -t LMS2 Console.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_LMS
+     ECHO Removing solidifier rules for Landesk Management Suite 8.6...
+     ECHO.
+     sadmin updaters remove stamper.exe 
+     sadmin updaters remove Console.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for ASP
+     :ADD_MIS_ASP
+     ECHO Adding solidifier rules for ASP.NET Framework...
+     ECHO.
+     sadmin updaters add -d -t ASP1 w3wp.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_ASP
+     ECHO Removing solidifier rules for ASP.NET Framework...
+     ECHO.
+     sadmin updaters remove w3wp.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for ACR
+     :ADD_MIS_ACR
+     ECHO Adding solidifier rules for Adobe Acrobat...
+     ECHO.
+     sadmin updaters add -t ACR1 acrobat.exe
+     sadmin updaters add -t ACR2 acrodist.exe
+     sadmin updaters add -t ACR3 FormDesigner.exe
+     sadmin updaters add -t ACR4 AdobeARM.exe
+     sadmin updaters add -t ACR5 Adobe_Updater.exe
+     sadmin updaters add -t ACR6 Adobeupdatemanager.exe
+     IF "%VALUE%" == "AMD64" (
+	     ECHO.
+	     sadmin attr add -n Adobeupdatemanager.exe
+	     ECHO.
+	     )
+     IF "%VALUE%" == "x86" (
+	     IF "%OS_VER%" == "PRE_VISTA" (
+		 ECHO.
+		 sadmin attr add -b acrord32.exe
+		 ECHO.
+		 )
+	     )
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_ACR
+     ECHO Removing solidifier rules for Adobe Acrobat..
+     ECHO.
+     sadmin updaters remove acrobat.exe
+     sadmin updaters remove acrodist.exe
+     sadmin updaters remove FormDesigner.exe
+     sadmin updaters remove AdobeARM.exe
+     sadmin updaters remove Adobe_Updater.exe
+     sadmin updaters remove Adobeupdatemanager.exe
+     IF "%VALUE%" == "AMD64" (
+	     ECHO.
+	     sadmin attr remove -n Adobeupdatemanager.exe
+	     ECHO.
+	     )
+     ECHO.
+     IF "%VALUE%" == "x86" (
+	     IF "%OS_VER%" == "PRE_VISTA" (
+		 sadmin attr remove -b acrord32.exe
+		 )
+	     )
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for uPnP
+     :ADD_MIS_uPnP
+     ECHO Adding solidifier rules for USB plug and play...
+     ECHO.
+     sadmin updaters add -t UPnP1 -d -l upnphost.dll svchost.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_uPnP
+     ECHO Removing solidifier rules for USB plug and play...
+     ECHO.
+     sadmin updaters remove -l upnphost.dll svchost.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+
+     rem add and remove for PGP
+     :ADD_MIS_PGP
+     ECHO Adding solidifier rules for PGP Encryption tool...
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_PGP
+     ECHO Removing solidifier rules for PGP Encryption tool...
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for SFC
+     :ADD_MIS_SFC
+     ECHO Adding solidifier rules for Smart FTP Client...
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_SFC
+     ECHO Removing solidifier rules for Smart FTP Client...
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for CuteFTP
+     :ADD_MIS_CuteFTP
+     ECHO Adding solidifier rules for CuteFTP....
+     ECHO.
+     sadmin updaters add -t CFTP1 cuteftppro.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_Cuteftp
+     ECHO Removing solidifier rules for CuteFTP...
+     ECHO.
+     sadmin updaters remove cuteftppro.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for IE 
+     :ADD_MIS_IE
+     ECHO Adding solidifier rules for Internet Explorer ...
+     ECHO.
+     IF "%VALUE%" == "AMD64" (
+	     ECHO.
+	     sadmin attr add -n ieinstal.exe
+	     sadmin attr add -n iexplore.exe
+	     ECHO.
+	     )
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_IE
+     ECHO Removing solidifier rules for Internet Explorer ...
+     ECHO.
+     IF "%VALUE%" == "AMD64" (
+	     sadmin attr remove -n ieinstal.exe
+	     sadmin attr remove -n iexplore.exe
+	     )
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+
+     rem add and remove for Outlook64 
+     :ADD_MIS_OUTLOOK64
+     ECHO Adding solidifier rules for Outlook ...
+     IF "%VALUE%" == "AMD64" (
+	     ECHO.
+	     sadmin attr add -n "\Program Files (x86)\Microsoft Office\Office12\OUTLOOK.EXE" 
+	     ECHO.
+	     )
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_OUTLOOK64
+     ECHO Removing solidifier rules for Outlook ...
+     ECHO.
+     IF "%VALUE%" == "AMD64" (
+	     sadmin attr remove -n "\Program Files (x86)\Microsoft Office\Office12\OUTLOOK.EXE"
+	     )
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for SI
+     :ADD_MIS_SI
+     ECHO Adding solidifier rules for System Information...
+     ECHO.
+     sadmin updaters add -d -t SI1 wmiprvse.exe
+     sadmin updaters add -t SI2 winmgmt.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_SI
+     ECHO Removing solidifier rules for System Information...
+     ECHO.
+     sadmin updaters remove wmiprvse.exe
+     sadmin updaters remove winmgmt.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for FMon
+     :ADD_MIS_FMon
+     ECHO Adding solidifier rules for FileMon application...
+     ECHO.
+     sadmin updaters add -t FMon1 Filemon.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_FMon
+     ECHO Removing solidifier rules for FileMon application...
+     ECHO.
+     sadmin updaters remove Filemon.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for MySQL2005,MS SQL Server 2000
+     :ADD_MIS_SQL
+     ECHO Adding solidifier rules for SQL Server...
+     ECHO.
+     sadmin updaters add -t SQL1 msmdsrv.exe
+     sadmin updaters add -t SQL2 mscorsvw.exe
+     sadmin updaters add -t SQL3 sservice.exe
+     sadmin updaters add -t SQL4 SqlWb.exe
+     sadmin updaters add -t SQL5 SQLServerBackup.exe
+     ECHO.
+     IF "%VALUE%" == "x86" (
+	     IF "%OS_VER%" == "PRE_VISTA" (
+		 sadmin attr add -b dexplore.exe
+		 )
+	     )
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_SQL
+     ECHO Removing solidifier rules for SQL Server...
+     ECHO.
+     sadmin updaters remove msmdsrv.exe
+     sadmin updaters remove mscorsvw.exe
+     sadmin updaters remove sservice.exe
+     sadmin updaters remove SqlWb.exe
+     sadmin updaters remove SQLServerBackup.exe
+     ECHO.
+     IF "%VALUE%" == "x86" (
+	     IF "%OS_VER%" == "PRE_VISTA" (
+		 sadmin attr remove -b dexplore.exe
+		 )
+	     )
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for MySQL5
+     :ADD_MIS_SQL5
+     ECHO Adding solidifier rules for MySQL5...
+     ECHO.
+     sadmin updaters add -t SQL51 msmdsrv.exe
+     sadmin updaters add -t SQL52 mscorsvw.exe
+     sadmin updaters add -t SQL53 sservice.exe
+     sadmin updaters add -t SQL54 SqlWb.exe
+     sadmin updaters add -t SQL55 SQLServerBackup.exe
+     sadmin updaters add -t SQL56 MySQLInstanceConfig.exe
+     ECHO.
+     IF "%VALUE%" == "x86" (
+	     IF "%OS_VER%" == "PRE_VISTA" (
+		 sadmin attr add -b dexplore.exe
+		 )
+	     )
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_SQL5
+     ECHO Removing solidifier rules for MySQL5...
+     ECHO.
+     sadmin updaters remove msmdsrv.exe
+     sadmin updaters remove mscorsvw.exe
+     sadmin updaters remove sservice.exe
+     sadmin updaters remove SqlWb.exe
+     sadmin updaters remove SQLServerBackup.exe
+     sadmin updaters remove MySQLInstanceConfig.exe
+     ECHO.
+     IF "%VALUE%" == "x86" (
+	     IF "%OS_VER%" == "PRE_VISTA" (
+		 sadmin attr remove -b dexplore.exe
+		 )
+	     )
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for IMail9.1
+     :ADD_MIS_IMail9
+     ECHO Adding solidifier rules for IMail9.1...
+     ECHO.
+     sadmin updaters add -t IMail91 sslUtility.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_IMAil9
+     ECHO Removing solidifier rules for IMail9.1...
+     ECHO.
+     sadmin updaters remove sslUtility.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for IMail2006
+     :ADD_MIS_IMail2006
+     ECHO Adding solidifier rules for IMail2006...
+     ECHO.
+     sadmin updaters add -t IMail20061 sslUtility.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_IMAil2006
+     ECHO Removing solidifier rules for IMail2006...
+     ECHO.
+     sadmin updaters remove sslUtility.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for SMS2003
+     :ADD_MIS_SMS
+     ECHO Adding solidifier rules for SMS2003...
+     ECHO.
+     sadmin updaters add -t SMS1 rpsetup.exe
+     sadmin updaters add -t SMS2 ccmsetup.exe
+     sadmin updaters add -t SMS3 sitecomp.exe
+     sadmin updaters add -t SMS4 smsexec.exe
+     sadmin updaters add -t SMS5 slpsetup.exe
+     sadmin updaters add -t SMS6 wbemwrap.exe
+     sadmin updaters add -t SMS7 wmicore.exe
+     sadmin updaters add -t SMS8 reportinginstall.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_SMS
+     ECHO Removing solidifier rules for SMS2003...
+     ECHO.
+     sadmin updaters remove rpsetup.exe
+     sadmin updaters remove ccmsetup.exe
+     sadmin updaters remove sitecomp.exe
+     sadmin updaters remove smsexec.exe
+     sadmin updaters remove slpsetup.exe
+     sadmin updaters remove wbemwrap.exe
+     sadmin updaters remove wmicore.exe
+     sadmin updaters remove reportinginstall.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for SMS2003 Client
+     :ADD_MIS_SMSClient
+     ECHO Adding solidifier rules for SMS2003 Client...
+     ECHO.
+     sadmin updaters add -t SMSClient1 CcmExec.exe
+     sadmin updaters add -t SMSClient2 SMSCliUI.exe
+     sadmin updaters add -t SMSClient3 ScanWrapper.exe
+     sadmin updaters add -t SMSClient4 -l CcmTask.dll Wmiprvse.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_SMSClient
+     ECHO Removing solidifier rules for SMS2003 Client...
+     ECHO.
+     sadmin updaters remove CcmExec.exe
+     sadmin updaters remove SMSCliUI.exe
+     sadmin updaters remove ScanWrapper.exe
+     sadmin updaters remove -l CcmTask.dll Wmiprvse.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Windows Defender 
+     :ADD_MIS_WD
+     ECHO Adding solidifier rules for Windows Defender...
+     ECHO.
+     sadmin updaters add -d -t WD1 wuauclt.exe
+     sadmin updaters add -d -t WD2 MsMpEng.exe
+     sadmin updaters add -d -t WD3 mpas-fe.exe
+     sadmin updaters add -d -t WD4 -l mpengine.dll svchost.exe
+     sadmin updaters add -d -t WD5 MSASCui.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_WD
+     ECHO Removing solidifier rules for Windows Defender...
+     ECHO.
+     sadmin updaters remove wuauclt.exe
+     sadmin updaters remove MsMpEng.exe
+     sadmin updaters remove mpas-fe.exe
+     sadmin updaters remove -l mpengine.dll svchost.exe
+     sadmin updaters remove MSASCui.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Windows Messenger 5.1 
+     :ADD_MIS_WM
+     ECHO Adding solidifier rules for Windows Messenger...
+     ECHO.
+     sadmin updaters add -t WM1 Msmsgs.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_WM
+     ECHO Removing solidifier rules for Windows Messenger...
+     ECHO.
+     sadmin updaters remove Msmsgs.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Wixaware 
+     :ADD_MIS_WA
+     ECHO Adding solidifier rules for Wixaware...
+     ECHO.
+     IF "%VALUE%" == "x86" (
+	     sadmin attr add %ATTR_RULE% Wixaware.exe
+	     )
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_WA
+     ECHO Removing solidifier rules for Wixaware...
+     ECHO.
+     IF "%VALUE%" == "x86" (
+	     sadmin attr remove %ATTR_RULE% Wixaware.exe
+	     )
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+rem add and remove for Netpro Directory Analyzer (NetPro DA)
+    :ADD_MIS_NDA
+     ECHO Adding solidifier rules for Netpro Directory Analyzer (NetPro DA)...
+     ECHO.
+     sadmin updaters add -t NetproDA1 daservice.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_NDA
+     ECHO Removing solidifier rules for Netpro Directory Analyzer (NetPro DA)...
+     ECHO.
+     Sadmin updaters remove daservice.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+rem add and remove for Netpro Change Auditor for Active Directory (NetPro CAAD)
+    :ADD_MIS_NCA
+     ECHO Adding solidifier rules for Netpro Change Auditor for Active Directory (NetPro CAAD)...
+     ECHO.
+     sadmin updaters add -t NetproCAAD1 caadagent.exe
+     sadmin updaters add -t NetproCAAD2 NPSrvHost.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_NCA
+     ECHO Removing solidifier rules for Netpro Change Auditor for Active Directory (NetPro CAAD)...
+     ECHO.
+     Sadmin updaters remove caadagent.exe
+     sadmin updaters remove NPSrvHost.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Install and Run Quest Recovery Manager
+     :ADD_MIS_QRM
+     ECHO Adding solidifier rules for Install and Run Quest Recovery Manager...
+     ECHO.
+     sadmin updaters add -t QRM1 ERDAgent.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_QRM
+     ECHO Removing solidifier rules for Install and Run Quest Recovery Manager...
+     ECHO.
+     Sadmin updaters remove ERDAgent.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Windows AD server
+     :ADD_MIS_AD
+     ECHO Adding solidifier rules for Windows AD server...
+     ECHO.
+     sadmin updaters add -t AD1 ntfrs.exe
+     sadmin updaters add -t AD2 ntbackup.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_AD
+     ECHO Removing solidifier rules for Windows AD server...
+     ECHO.
+     Sadmin updaters remove ntfrs.exe
+     sadmin updaters remove ntbackup.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Install and Run St. Bernard UI Expert
+     :ADD_MIS_BUI
+     ECHO Adding solidifier rules for Install and Run St. Bernard UI Expert...
+     ECHO.
+     sadmin updaters add -t BUI1 UEInstallService.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_BUI
+     ECHO Removing solidifier rules for Install and Run St. Bernard UI Expert...
+     ECHO.
+     Sadmin updaters remove UEInstallService.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for HP Array Configuration Utility
+     :ADD_MIS_HPACU
+     ECHO Adding solidifier rules for HP Array Configuration Utility...
+     ECHO.
+     ECHO Add FindFirstVolumeW API into the MPDecoySkipList registry manually
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_HPACU
+     ECHO Removing solidifier rules for HP Array Configuration Utility...
+     ECHO.
+     ECHO Remove FindFirstVolumeW API into the MPDecoySkipList registry manually
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for HP OpenView Storage Data Protector 5.5
+     :ADD_MIS_HPDP
+     ECHO Adding solidifier rules for HP OpenView Storage Data Protector 5.5...
+     ECHO.
+     sadmin updaters add -t HPSDP1 omnitrig.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_HPDP
+     ECHO Removing solidifier rules for HP OpenView Storage Data Protector 5.5...
+     ECHO.
+     sadmin updaters remove omnitrig.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for HP Remote Support Software Manager
+     :ADD_MIS_HPRSM
+     ECHO Adding solidifier rules for HP Remote Support Software Manager...
+     ECHO.
+     sadmin updaters add -t HPRSSM1 Tuner.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_HPRSM
+     ECHO Removing solidifier rules for HP Remote Support Software Manager...
+     ECHO.
+     sadmin updaters remove Tuner.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for IBM Director Server 4.2
+     :ADD_MIS_IBMDR
+     ECHO Adding solidifier rules for IBM Director Server 4.2
+     ECHO.
+     sadmin updaters add -t IBMDirectorMon1 twgmonit.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_IBMDR
+     ECHO Removing solidifier rules for IBM Director Server 4.2
+     ECHO.
+     sadmin updaters remove twgmonit.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for I-Goldmine Server
+     :ADD_MIS_IGOLD
+     ECHO Adding solidifier rules for I-Goldmine Server
+     ECHO.
+     sadmin updaters add -t IGoldmine1 getlicense.exe
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_IGOLD
+     ECHO Removing solidifier rules for I-Goldmine Server
+     ECHO.
+     sadmin updaters remove getlicense.exe
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for VNC Server/Viewer
+     :ADD_MIS_VNC
+     ECHO Adding solidifier rules for VNC Server/Viewer
+     ECHO.
+     sadmin updaters add -t VNC1 vnctool.exe
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_VNC
+     ECHO Removing solidifier rules for VNC Server/Viewer
+     ECHO.
+     sadmin updaters remove vnctool.exe
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for WIN ZIP
+     :ADD_MIS_ZIP
+     ECHO Adding solidifier rules for WIN ZIP
+     ECHO.
+     sadmin updaters add -t WINZIP1 wzsepe32.exe
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_ZIP
+     ECHO Removing solidifier rules for WIN ZIP
+     ECHO.
+     sadmin updaters remove wzsepe32.exe
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Mozilla firefox
+     :ADD_MIS_FF
+     ECHO Adding solidifier rules for Firefox
+     ECHO.
+     sadmin updaters add -t Firefox1 -p firefox.exe updater.exe
+     sadmin attr add -o parent=firefox.exe -i helper.exe
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_FF
+     ECHO Removing solidifier rules for Firefox
+     ECHO.
+     sadmin updaters remove -p firefox.exe updater.exe
+     sadmin attr remove -i helper.exe
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for HP Quality Center
+     :ADD_MIS_HP_QC
+     ECHO Adding solidifier rules for HP Quality Center
+     ECHO.
+     sadmin updaters add -d -t HP_Quality_Center1 -l QCClient.UI.Core.dll iexplore.exe
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_HP_QC
+     ECHO Removing solidifier rules for HP Quality Center
+     ECHO.
+     sadmin updaters remove -l QCClient.UI.Core.dll iexplore.exe
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Java 2 Runtime
+     :ADD_MIS_J2RE
+     ECHO Adding solidifier rules for Java 2 Runtime
+     ECHO.
+     sadmin updaters add -t J2RE1 -p winlogon.exe ikernel.exe
+     sadmin updaters add -t J2RE2 -p svchost.exe ikernel.exe
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_J2RE
+     ECHO Removing solidifier rules for Java 2 Runtime
+     ECHO.
+     sadmin updaters remove -p winlogon.exe ikernel.exe
+     sadmin updaters remove -p svchost.exe ikernel.exe
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for McAfee DLP Agent
+     :ADD_MIS_DLPAgent
+     ECHO Adding solidifier rules for McAfee DLP Agent
+     ECHO.
+     sadmin updaters add -d -t DLP1 fcags.exe 
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_DLPAgent
+     ECHO Removing solidifier rules for McAfee DLP Agent
+     ECHO.
+     sadmin updaters remove fcags.exe
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Symantec LiveUpdate
+     :ADD_MIS_SLU
+     ECHO Adding solidifier rules for Symantec LiveUpdate
+     ECHO.
+     sadmin attr add -a EraserUtilDrv10621.sys
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_SLU
+     ECHO Removing solidifier rules for Symantec LiveUpdate
+     ECHO.
+     sadmin attr remove -a EraserUtilDrv10621.sys
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Install Intel (R) Extreme Graphics 2 Driver
+     :ADD_MIS_IGD
+     ECHO Adding solidifier rules for Install Intel (R) Extreme Graphics 2 Driver
+     ECHO.
+     sadmin attr add -a igfxres.dll
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_IGD
+     ECHO Removing solidifier rules for Install Intel (R) Extreme Graphics 2 Driver
+     ECHO.
+     sadmin attr remove -a igfxres.dll
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Install McAfee Agent 
+     :ADD_MIS_MAI
+     ECHO Adding solidifier rules for Install McAfee Agent
+     ECHO.
+     sadmin attr add -a FramePkg.exe
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_MAI
+     ECHO Removing solidifier rules for Install McAfee Agent
+     ECHO.
+     sadmin attr remove -a FramePkg.exe
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for SiSoftware Sandra Lite 2009
+     :ADD_MIS_SSLite
+     ECHO Adding solidifier rules for SiSoftware Sandra Lite 2009
+     ECHO.
+     sadmin updaters add -t SSLite1 RpcSandraSrv.exe
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_SSLite
+     ECHO Removing solidifier rules for SiSoftware Sandra Lite 2009
+     ECHO.
+     sadmin updaters remove RpcSandraSrv.exe
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for 2X ApplicationServer and LoadBalancer
+     :ADD_MIS_2X
+     ECHO Adding solidifier rules for 2X ApplicationServer and LoadBalancer
+     ECHO.
+     sadmin updaters add -t 2X1 2Xcopy64.exe
+     sadmin updaters add -t 2X2 2XConsole.exe
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_2X
+     ECHO Removing solidifier rules for 2X ApplicationServer and LoadBalancer
+     ECHO.
+     sadmin updaters remove 2Xcopy64.exe
+     sadmin updaters remove 2XConsole.exe
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Altiris
+     :ADD_MIS_ALT
+     ECHO Adding solidifier rules for Altiris
+     ECHO.
+     sadmin updaters add -t Altiris1 ACIntUsr.exe
+     sadmin updaters add -t Altiris2 aclient.exe
+     sadmin updaters add -t Altiris3 AeXNSAgent.exe
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_ALT
+     ECHO Removing solidifier rules for Altiris
+     ECHO.
+     sadmin updaters remove ACIntUsr.exe
+     sadmin updaters remove aclient.exe
+     sadmin updaters remove AeXNSAgent.exe
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Apple
+     :ADD_MIS_Apple_iTunes
+     ECHO Adding solidifier rules for Apple
+     ECHO.
+     sadmin updaters add -t Apple1 "Apple Software Update\SoftwareUpdate.exe"
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_Apple_iTunes
+     ECHO Removing solidifier rules for Apple
+     ECHO.
+     sadmin updaters remove "Apple Software Update\SoftwareUpdate.exe"
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Remotely Anywhere
+     :ADD_MIS_RAW
+     ECHO Adding solidifier rules for Remotely Anywhere
+     ECHO.
+     sadmin updaters add -d -t RAW1 RemotelyAnywhere.exe
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_RAW
+     ECHO Removing solidifier rules for Remotely Anywhere
+     ECHO.
+     sadmin updaters remove RemotelyAnywhere.exe
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for AutoCAD
+     :ADD_MIS_ACD
+     ECHO Adding solidifier rules for AutoCAD
+     ECHO.
+     IF "%VALUE%" == "x86" (
+	     sadmin attr add %ATTR_RULE% acadlt.exe
+	     sadmin attr add %ATTR_RULE% lmu.exe
+	     sadmin attr add %ATTR_RULE% dwgviewr.exe
+	     )
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_ACD
+     ECHO Removing solidifier rules for AutoCAD
+     ECHO.
+     IF "%VALUE%" == "x86" (
+	     sadmin attr remove %ATTR_RULE% acadlt.exe
+	     sadmin attr remove %ATTR_RULE% lmu.exe
+	     sadmin attr remove %ATTR_RULE% dwgviewr.exe
+	     )
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Update McAfee VM
+     :ADD_MIS_MVM
+     ECHO Adding solidifier rules for MVM
+     ECHO.
+     sadmin updaters add -t MVM1 FCPatchInstallAgent.exe
+     sadmin updaters add -t MVM2 FCAgent.exe
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_MVM
+     ECHO Removing solidifier rules for MVM
+     ECHO.
+     sadmin updaters remove FCPatchInstallAgent.exe
+     sadmin updaters remove FCAgent.exe
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Remote Administrator v2.1
+     :ADD_MIS_RA
+     ECHO Adding solidifier rules for Remote Administrator v2.1
+     ECHO.
+     IF "%VALUE%" == "x86" (
+	     sadmin attr add %ATTR_RULE% r_server.exe
+	     sadmin attr add %ATTR_RULE% radmin.exe
+	     sadmin attr add %ATTR_RULE% radmin22.exe
+	     sadmin attr add %ATTR_RULE% hsmadmin.exe
+	     )
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_RA
+     ECHO Removing solidifier rules for Remote Administrator v2.1
+     ECHO.
+     IF "%VALUE%" == "x86" (
+	     sadmin attr remove %ATTR_RULE% r_server.exe
+	     sadmin attr remove %ATTR_RULE% radmin.exe
+	     sadmin attr remove %ATTR_RULE% radmin22.exe
+	     sadmin attr remove %ATTR_RULE% hsmadmin.exe
+	     )
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Microsoft Virtual PC
+     :ADD_MIS_VPC
+     ECHO Adding solidifier rules for Microsoft Virtual PC
+     ECHO.
+     sadmin updaters add -t MVPC1 "Virtual PC.exe"
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_VPC
+     ECHO Removing solidifier rules for Microsoft Virtual PC
+     ECHO.
+     sadmin updaters remove "Virtual PC.exe"
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Microsoft Outlook Express
+     :ADD_MIS_OutlookExpress
+     ECHO Adding solidifier rules for Microsoft Outlook Express
+     ECHO.
+     sadmin updaters add -t Outlook1 msimn.exe
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_MIS_OutlookExpress
+     ECHO Removing solidifier rules for Microsoft Outlook Express
+     ECHO.
+     sadmin updaters remove msimn.exe
+     ECHO.
+     ECHO Rules removed successfully.
+     GOTO END_SCRIPT
+
+
+
+     rem add and remove for CitrixServer
+     :ADD_EA_CitrixServer
+     ECHO Adding solidifier rules for Citrix Metaframe Presentation Server 3.0...
+     ECHO.
+     sadmin updaters add -t Citrix_Server1 -p userinit.exe cmd.exe
+     sadmin updaters add -d -t  Citrix_Server2 aspnet_wp.exe
+     sadmin updaters add -d -t  Citrix_Server3 w3wp.exe
+     sadmin updaters add -t Citrix_Server4 acregl.exe
+     sadmin updaters add -t Citrix_Server5 ctxhide.exe
+     sadmin updaters add -t Citrix_Server6 ImaSrv.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_EA_CitrixServer
+     ECHO Removing solidifier rules for Citrix Metaframe Presentation Server 3.0...
+     ECHO.
+     sadmin updaters remove aspnet_wp.exe
+     sadmin updaters remove w3wp.exe
+     sadmin updaters remove -p userinit.exe cmd.exe
+     sadmin updaters remove acregl.exe
+     sadmin updaters remove ctxhide.exe
+     sadmin updaters remove ImaSrv.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+
+     rem add and remove for SUSServer
+     :ADD_EA_SUSServer
+     ECHO Adding solidifier rules for Windows Server Update Services 2.0(SUS)...
+     ECHO.
+     sadmin updaters add -d -t SUS_Server1 aspnet_wp.exe
+     sadmin updaters add -d -t SUS_Server2 w3wp.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_EA_SUSServer
+     ECHO Removing solidifier rules for FOR Windows Server Update Services2.0(SUS)...
+     ECHO.
+     sadmin updaters remove aspnet_wp.exe
+     sadmin updaters remove w3wp.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for WSUSServer2.0sp1
+     :ADD_EA_WSUSServer
+     ECHO Adding solidifier rules for Windows Server Update Services2.0 sp1...
+     ECHO.
+     sadmin updaters add -d -t WSUS_Server1 aspnet_wp.exe
+     sadmin updaters add -d -t WSUS_Server2 w3wp.exe
+     sadmin updaters add -t WSUS_Server3 wsusservice.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_EA_WSUSServer
+     ECHO Removing solidifier rules for FOR Windows Server Update Services2.0 sp1...
+     ECHO.
+     sadmin updaters remove aspnet_wp.exe
+     sadmin updaters remove w3wp.exe
+     sadmin updaters remove wsusservice.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for TSM SERVER
+     :ADD_EA_TSMServer
+     ECHO Adding solidifier rules for Tivoli Storage Management Server 4.1.6,5.3.1.0(TSM)...
+     ECHO.
+     sadmin updaters add -t TSM_Server2 Lcfd.exe
+     sadmin updaters add -t TSM_Server3 Lcfep.exe
+     sadmin updaters add -t TSM_Server4 Wlcftap.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_EA_TSMServer
+     ECHO Removing solidifier rules for Tivoli Storage Management Server 4.1.6,5.3.1.0(TSM)...
+     ECHO.
+     Sadmin updaters remove Lcfd.exe
+     Sadmin updaters remove Lcfep.exe
+     Sadmin updaters remove Wlcftap.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for TSM CLIENT
+     :ADD_EA_TSMClient
+     ECHO Adding solidifier rules for IBM Tivoli Storage Manager Client...
+     ECHO.
+     sadmin updaters add -t TSM_Client1 dsm.exe
+     sadmin updaters add -t TSM_Client2 dsmcsvc.exe
+     ECHO.
+     ECHO Rules added sucessfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_EA_TSMClient
+     ECHO Removing solidifier rules for IBM Tivoli Storage Manager Client...
+     ECHO.
+     sadmin updaters remove dsm.exe
+     sadmin updaters remove dsmcsvc.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for MOM SERVER
+     :ADD_EA_MOMServer
+     ECHO Adding solidifier rules for MOM SERVER 2005...
+     ECHO.
+     sadmin updaters add -t MOM_Server1 MOM.UI.OpsConsoleExe.exe
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_EA_MOMServer
+     ECHO Removing solidifier rules for MOM SERVER 2005...
+     ECHO.
+     sadmin updaters remove MOM.UI.OpsConsoleExe.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for SCOM SERVER 2007
+     :ADD_EA_SCOMServer
+     ECHO Adding solidifier rules for SCOM SERVER 2007...
+     ECHO.
+
+     sadmin updaters add -t SCOM_Server1 Healthservice.exe
+     sadmin updaters add -t SCOM_Server2 MonitoringHost.exe
+     sadmin updaters add -t SCOM_Server3 MOMPerfSnapShotHelper.exe
+     sadmin updaters add -t SCOM_Server4 sqlservr.exe
+     sadmin updaters add -t SCOM_Server5 AdtAgent.exe
+
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_EA_SCOMServer
+     ECHO Removing solidifier rules for SCOM SERVER 2007...
+     ECHO.
+     sadmin updaters remove HealthService.exe
+     sadmin updaters remove MonitoringHost.exe
+     sadmin updaters remove MOMPerfSnapshotHelper.exe
+     sadmin updaters remove sqlservr.exe
+     sadmin updaters remove AdtAgent.exe
+
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for SCOM Client 2007
+     :ADD_EA_SCOMClient
+     ECHO Adding solidifier rules for SCOM Client 2007...
+     ECHO.
+     sadmin updaters add -t SCOM_CLIENT1 MOMAgentInstaller.exe
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_EA_SCOMClient
+     ECHO Removing solidifier rules for SCOM Client 2007...
+     ECHO.
+     sadmin updaters remove MOMAgentInstaller.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for Install SCOM Client 2007
+     :ADD_EA_InstallSCOMClient
+     ECHO Adding solidifier rules for Install SCOM Client 2007...
+     ECHO.
+     sadmin attr add -a MOMAgentInstaller.exe
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_EA_InstallSCOMClient
+     ECHO Removing solidifier rules for Install SCOM Client 2007...
+     ECHO.
+     sadmin attr remove -a MOMAgentInstaller.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+
+     rem add and remove for BigFix
+     :ADD_EA_BigFix
+     ECHO Adding solidifier rules for BigFix...
+     ECHO.
+     sadmin updaters add -t BigFix1 BESClient.exe
+     sadmin updaters add -t BigFix2 BESWebReportsServer.exe
+     ECHO.
+     ECHO Rules added successfully.
+     GOTO END_SCRIPT_ADD
+
+     :REMOVE_EA_BigFix
+     ECHO Removing solidifier rules for BigFix...
+     ECHO.
+     sadmin updaters remove BESClient.exe
+     sadmin updaters remove BESWebReportsServer.exe
+     ECHO.
+     ECHO Rules removed sucessfully.
+     GOTO END_SCRIPT
+     
+     :BAD_IDENTIFIER
+     ECHO Please specify a correct application identifier.
+     ECHO Please note that application identifiers are case sensitive.
+     ECHO Run `%0' to see the list of applications.
+     GOTO END_SCRIPT
+
+     :END_SCRIPT_ADD
+     ECHO.
+     ECHO WARNING! Reboot your system before proceeding further as some rules take
+     ECHO effect only on system restart.
+     GOTO END_SCRIPT
+
+     :END_SCRIPT

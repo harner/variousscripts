@@ -1,0 +1,7 @@
+PowerShell, and then enter “Start-Process powershell -Verb RunAs”
+
+netsh advfirewall set allprofiles state off
+
+New-NetFirewallRule -DisplayName "NetBIOS UDP Port 137" -Direction inbound -Profile Any -Action Allow -LocalPort 137 -Protocol UDP
+
+Enable-NetFirewallRule -DisplayName "NetBIOS UDP Port 137"

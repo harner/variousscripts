@@ -1,0 +1,21 @@
+Disable Solidifier if present, then Open cmd with Administrative Privileges
+
+
+View Windows shares:
+
+net share
+
+
+Create a Windows share named Somaris:
+
+net share Somaris=c:\Somaris /GRANT:syadmin,READ
+
+
+Remove a Windows share named Somaris (do not remove if you noticed the file share is already enabled with the 'net share' command as it *may* cause issues):
+
+net share Somaris /delete
+
+
+Open a FW port for SMB:
+
+netsh firewall set portopening tcp 445 SMBTCP enable all
