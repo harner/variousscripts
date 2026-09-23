@@ -1,0 +1,1 @@
+taskkill /F /FI "status eq NOT RESPONDING"

@@ -1,0 +1,1 @@
+﻿gci "* - Copy*" -recurse | foreach { Remove-Item -Path $_.FullName }

@@ -1,0 +1,68 @@
+20251223T14:09:53.2421 User's TEMP clean folder C:\Users\*\AppData\Local\Temp\* any * files older then 7 days.
+20251223T14:10:00.0686 Done (cleaned up  216.86 megaBytes, total 216.92 megaBytes  )
+20251223T14:10:00.0965 Temporary Internet Files clean folder C:\Users\*\AppData\Local\Microsoft\Windows\Temporary Internet Files\* any * files older then 7 days.
+20251223T14:10:00.2115 Done (cleaned up  0 Bytes, total 216.92 megaBytes  )
+20251223T14:10:00.2415 Crash Dumps clean folder C:\Users\*\AppData\Local\CrashDumps\* any * files older then 7 days.
+20251223T14:10:00.3075 Done (cleaned up  36.63 megaBytes, total 253.55 megaBytes  )
+20251223T14:10:00.3321 Windows Error Reporting clean folder C:\Users\*\AppData\Local\Microsoft\Windows\WER\* any * files older then 7 days.
+20251223T14:10:00.3724 Done (cleaned up  0 Bytes, total 253.55 megaBytes  )
+20251223T14:10:00.3977 Event Trace Logs and Thumbnails clean folder C:\Users\*\AppData\Local\Microsoft\Windows\Explorer\* any .etl .db files older then 7 days.
+20251223T14:10:00.4857 Done (cleaned up  2.02 megaBytes, total 255.57 megaBytes  )
+20251223T14:10:00.5107 Internet Explorer clean folder C:\Users\*\AppData\Local\Microsoft\Internet Explorer\* any * files older then 7 days.
+20251223T14:10:00.6509 Done (cleaned up  9.83 megaBytes, total 265.41 megaBytes  )
+20251223T14:10:00.6832 Terminal Server cache clean folder C:\Users\*\AppData\Local\Microsoft\Terminal Server Client\Cache\* any * files older then 7 days.
+20251223T14:10:00.7231 Done (cleaned up  0 Bytes, total 265.41 megaBytes  )
+20251223T14:10:00.7551 Recently used documents and folders clean folder C:\Users\*\AppData\Roaming\Microsoft\Windows\Recent\* any .lnk files older then 7 days.
+20251223T14:10:01.1601 Done (cleaned up  -44 kiloBytes, total 265.36 megaBytes  )
+20251223T14:10:01.1918 Software Distribution Logfiles clean folder C:\WINDOWS\SoftwareDistribution\DataStore\Logs\* any .log files older then 7 days.
+20251223T14:10:01.2371 Done (cleaned up  6.25 megaBytes, total 271.61 megaBytes  )
+20251223T14:10:01.2703  clean folder C:\WINDOWS\Performance\WinSAT\DataStore\* any * files older then 7 days.
+20251223T14:10:01.5034 Done (cleaned up  3.4 megaBytes, total 275.02 megaBytes  )
+20251223T14:10:01.5477 Software Distribution logfiles clean folder C:\WINDOWS\system32\catroot2\* any .jrs .log files older then 7 days.
+20251223T14:10:01.5889 Done (cleaned up  0 Bytes, total 275.02 megaBytes  )
+20251223T14:10:01.6193 Windows Diagnostics Infrastructure logfiles clean folder C:\WINDOWS\system32\wdi\LogFiles\* any * files older then 7 days.
+20251223T14:10:01.6715 Done (cleaned up  56.1 megaBytes, total 331.12 megaBytes  )
+20251223T14:10:01.7028 Windows Debug clean folder C:\WINDOWS\debug\* any .log files older then 7 days.
+20251223T14:10:01.7483 Done (cleaned up  16.01 megaBytes, total 347.13 megaBytes  )
+20251223T14:10:01.7752 Windows Temp clean folder C:\WINDOWS\Temp\* any * files older then 7 days.
+20251223T14:10:01.8235 Done (cleaned up  13.39 megaBytes, total 360.52 megaBytes  )
+20251223T14:10:01.8523 Prefetch clean folder C:\WINDOWS\Prefetch\* any * files older then 7 days.
+20251223T14:10:02.0461 Done (cleaned up  5.59 megaBytes, total 366.11 megaBytes  )
+20251223T14:10:02.0740 Windows Error Reporting clean folder C:\ProgramData\Microsoft\Windows\WER\* any * files older then 7 days.
+20251223T14:10:02.1122 Done (cleaned up  0 Bytes, total 366.11 megaBytes  )
+20251223T14:10:02.1394  clean folder C:\WINDOWS\logs\CBS\* any .log files older then 0 days.
+20251223T14:10:02.1840 Done (cleaned up  1.52 megaBytes, total 367.63 megaBytes  )
+20251223T14:10:02.2130  clean folder C:\inetpub\logs\LogFiles\* any * files older then 0 days.
+20251223T14:10:02.2520 Done (cleaned up  0 Bytes, total 367.63 megaBytes  )
+20251223T14:10:02.2861 Removes file C:\WINDOWS\memory.dmp
+20251223T14:10:02.3236 Done (cleaned up  0 Bytes, total 367.63 megaBytes  )
+20251223T14:10:02.3521 Removes file C:\ProgramData\Microsoft\Windows\Power Efficiency Diagnostics\energy-report-*-*-*.xml
+20251223T14:10:02.4062 Done (cleaned up  696 kiloBytes, total 368.31 megaBytes  )
+20251223T14:10:02.4411 cleanup Internet Explorer, Chrome, Edge, Firefox
+20251223T14:10:25.6631 Done (cleaned up  257.96 megaBytes, total 626.27 megaBytes  )
+20251223T14:10:25.7022 Clean Events logs
+20251223T14:10:45.4563 Done (cleaned up  303.37 megaBytes, total 929.64 megaBytes  )
+20251223T14:10:45.4913 Empty Recycle Bin.
+20251223T14:10:45.5713 Done (cleaned up  0 Bytes, total 929.64 megaBytes  )
+20251223T14:10:45.6011 Cleaning WinSxS folder
+20251223T14:11:24.8345 Done (cleaned up  5.38 gigaBytes, total 6.29 gigaBytes  )
+20251223T14:14:22.0050 Deleting from C:\ any .log .tmp .bak .old files older then 7 days.
+20251223T14:16:47.0357 Done (cleaned up  1.15 gigaBytes, total 7.45 gigaBytes  )
+20251223T14:21:55.3085 Done
+20251223T14:21:55.3443 Check root folder drive C:
+20251223T14:21:55.4117 Done
+20251223T14:21:55.4427 check Hibernation file
+20251223T14:21:55.4696 Done
+20251223T14:22:17.5744 Scan volume drive C
+20251223T14:23:06.9972 Done
+20251223T14:43:19.1520 cleanup Windows Store
+20251223T14:43:20.3285 Done (cleaned up  1.55 megaBytes, total 7.56 gigaBytes  )
+20251223T14:43:34.4357 run Windows disk cleaner (cleanmgr)
+20251223T14:44:53.7690 Done (cleaned up  -2.05 megaBytes, total 7.54 gigaBytes  )
+20251223T14:44:57.8398 clean Software Distribution
+20251223T14:44:58.9888 Done (cleaned up  59.35 megaBytes, total 7.6 gigaBytes  )
+20251223T14:45:02.3540 clean Catroot2 folder
+20251223T14:45:03.0988 Done
+20251223T14:45:08.0961 clean Windows Diagnostics Infrastructure
+20251223T14:45:08.1280  clean folder C:\Windows\System32\WDI\* any * files older then 0 days.
+20251223T14:45:08.1883 Done (cleaned up  152 kiloBytes, total 7.52 gigaBytes  )
